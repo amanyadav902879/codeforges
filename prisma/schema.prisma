@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  username       String    @unique
+  email          String    @unique
+  passwordHash   String
+  displayName    String?
+  bio            String    @default("")
+  avatarSeed     String    @default("")
+  xp             Int       @default(0)
+  level          Int       @default(1)
+  streak         Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastActiveDate String?
+  exercisesCompleted Int @default(0)
+  totalTimeSpent Int    @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  submissions    Submission[]
+  progress       LessonProgress[]
+  badges         UserBadge[]
+  streakLogs     StreakLog[]
+  dailyChallenges DailyChallengeAttempt[]
+}
+
+model LearningPath {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  icon        String   @default("")
+  color       String   @default("#f97316")
+  targetAudience String @default("")
+  estimatedLessons Int @default(0)
+  order       Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  modules     Module[]
+}
+
+model Module {
+  id          String       @id @default(cuid())
+  title       String
+  description String       @default("")
+  order       Int          @default(0)
+  pathId      String
+  path        LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+
+  @@index([pathId])
+}
+
+model Lesson {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @default("")
+  content     String  @default("")
+  difficulty  String  @default("STANDARD")
+  contextIntro String @default("")
+  order       Int     @default(0)
+  moduleId    String
+  module      Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  exercises   Exercise[]
+  skillTags   String  @default("")
+
+  progress    LessonProgress[]
+
+  @@index([moduleId])
+}
+
+model Exercise {
+  id              String   @id @default(cuid())
+  title           String
+  type            String   @default("UNIT_TEST")
+  description     String
+  starterCode     String   @default("")
+  testCode        String   @default("")
+  referenceSolution String @default("")
+  hints           String   @default("[]")
+  difficulty      String   @default("STANDARD")
+  xpReward        Int      @default(50)
+  timeLimit       Int?     
+  lessonId        String
+  lesson          Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  submissions     Submission[]
+  isDailyChallenge Boolean  @default(false)
+  dailyDate       String?
+  dailyAttempts   DailyChallengeAttempt[]
+
+  @@index([lessonId])
+}
+
+model Submission {
+  id            String   @id @default(cuid())
+  code          String
+  passed        Boolean
+  score         Int      @default(0)
+  timeTaken     Int      @default(0)
+  hintsUsed     Int      @default(0)
+  attemptNumber Int      @default(1)
+  createdAt     DateTime @default(now())
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId    String
+  exercise      Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([exerciseId])
+}
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  status      String   @default("NOT_STARTED")
+  score       Int      @default(0)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+}
+
+model Badge {
+  id            String   @id @default(cuid())
+  name          String
+  description   String
+  icon          String   @default("")
+  category      String   @default("STREAK")
+  rarity        String   @default("COMMON")
+  triggerValue  Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  users         UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  earnedAt  DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+}
+
+model StreakLog {
+  id               String   @id @default(cuid())
+  date             String
+  xpEarned         Int      @default(0)
+  exercisesCompleted Int     @default(0)
+  timeSpent        Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model DailyChallengeAttempt {
+  id          String   @id @default(cuid())
+  passed      Boolean  @default(false)
+  timeTaken   Int      @default(0)
+  xpEarned    Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId  String
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

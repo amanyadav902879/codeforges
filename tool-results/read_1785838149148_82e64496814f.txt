@@ -1,0 +1,432 @@
+   501→   501→   501→Naming  Variable/method names that don't convey intent
+   502→   502→   502→Structure       Method length, class responsibility, coupling
+   503→   503→   503→Security        SQL injection patterns, hardcoded secrets, unsafe deserialization
+   504→   504→   504→Best Practices  SOLID violations, DRY violations, missing null checks
+   505→   505→   505→
+   506→   506→   506→4.1.3 Review Presentation
+   507→   507→   507→Inline annotations on code (like GitHub PR review comments)
+   508→   508→   508→Overall score: 1–5 stars
+   509→   509→   509→"Fix all" button: applies AI-suggested fixes automatically (user can accept/reject individually)
+   510→   510→   510→Review history: see how your code quality score trends over time
+   511→   511→   511→4.2 AI Tutor Chatbot
+   512→   512→   512→4.2.1 Context-Aware Chat
+   513→   513→   513→Chat is embedded in every lesson/exercise page
+   514→   514→   514→AI automatically receives: current lesson content, user's code, test results, error messages, user's skill level, learning history
+   515→   515→   515→No need to re-explain context — "Why did my test fail?" already knows which test and what the code looks like
+   516→   516→   516→4.2.2 Tutor Modes
+   517→   517→   517→Mode
+   518→   518→   518→Trigger
+   519→   519→   519→Behavior
+   520→   520→   520→Socratic        Default Asks guiding questions instead of giving answers: "What do you think happens when you pass null here?"
+   521→   521→   521→Direct  User says "just tell me" or after 3 failed Socratic attempts    Gives straightforward answer with explanation
+   522→   522→   522→Visual  User says "show me"     Generates Mermaid diagrams, ASCII art, or describes visual concepts
+   523→   523→   523→Analogy User says "explain like I'm 5"  Uses real-world analogies: "A HashMap is like a restaurant — the key is your name, the value is your order..."
+   524→   524→   524→Challenge       User seems confident    "Think you know this? Try this harder version..."
+   525→   525→   525→
+   526→   526→   526→4.2.3 Conversation Features
+   527→   527→   527→Conversation history persisted per lesson (can review past conversations)
+   528→   528→   528→"Pin" important messages for later reference
+   529→   529→   529→Export conversation as Markdown notes
+   530→   530→   530→AI proactively suggests: "I noticed you struggled with generics in the last 3 exercises. Want me to create a quick practice set?"
+   531→   531→   531→4.2.4 Guardrails
+   532→   532→   532→AI will NEVER write the complete exercise solution (violates learning purpose)
+   533→   533→   533→AI can give hints, explain concepts, point to documentation, show similar but different examples
+   534→   534→   534→If user repeatedly asks for direct answers, AI gently redirects: "I could tell you, but you'll remember 10x better if you figure it out. Here's a hint..."
+   535→   535→   535→Fallback: if AI can't help (rare), direct user to the lesson discussion forum
+   536→   536→   536→4.3 AI Pair Programmer
+   537→   537→   537→4.3.1 Feature
+   538→   538→   538→Toggle "AI Pair" mode in the editor
+   539→   539→   539→AI observes your code as you type
+   540→   540→   540→AI offers suggestions via inline ghost text (like GitHub Copilot) — but EDUCATIONALLY:
+   541→   541→   541→Doesn't just write code — suggests with explanation tooltip on hover
+   542→   542→   542→"Suggestion: Use var here (Java 10+). Reason: Type is obvious from right side, reduces clutter."
+   543→   543→   543→User can accept (Tab), reject (Esc), or ask "Why?" (opens chat with context)
+   544→   544→   544→4.3.2 Pair Programming Modes
+   545→   545→   545→Mode
+   546→   546→   546→Behavior
+   547→   547→   547→Silent  Only suggests when you pause for 5+ seconds (non-intrusive)
+   548→   548→   548→Active  Suggests as you type (like Copilot)
+   549→   549→   549→Challenge       AI writes code, YOU review it and find bugs intentionally inserted
+   550→   550→   550→Reverse You describe what you want in plain English, AI writes it, you study the output
+   551→   551→   551→
+   552→   552→   552→4.4 Personalized Learning Path Generator
+   553→   553→   553→4.4.1 Skill Gap Analysis
+   554→   554→   554→AI analyzes: all exercise scores, quiz review performance, time spent per topic, hint usage patterns
+   555→   555→   555→Generates skill map with confidence levels: "Strong" / "Adequate" / "Weak" / "Gap"
+   556→   556→   556→Produces natural language report: "You're strong in OOP and basic Spring, but your concurrency skills are weak and you have a gap in SQL optimization"
+   557→   557→   557→4.4.2 Personalized Path Proposal
+   558→   558→   558→Based on skill gaps + user's goal (selected during onboarding: "I want to become a backend developer" / "I want to learn AI/ML" / "I want to pass interviews")
+   559→   559→   559→AI generates a custom path: "Here's your personalized 8-week plan. Week 1–2: Fix concurrency gaps. Week 3–4: SQL deep dive. Week 5–8: Spring Boot advanced + project"
+   560→   560→   560→User can accept, modify (drag modules around), or reject ("No, I want to focus on AI/ML instead")
+   561→   561→   561→Path updates weekly based on new performance data
+   562→   562→   562→4.4.3 "What Should I Do Next?" Button
+   563→   563→   563→Always-visible button that asks AI for the single best next action
+   564→   564→   564→Considers: streak status, due reviews, time of day, energy level (inferred from performance patterns), upcoming deadlines
+   565→   565→   565→"It's 10 PM and you've been coding for 45 minutes. Do 3 spaced repetition reviews (5 min) and call it a day. Your streak will be safe."
+   566→   566→   566→4.5 Auto-Generated Practice Problems
+   567→   567→   567→4.5.1 Generation Pipeline
+   568→   568→   568→AI analyzes exercises where user scored low or used many hints
+   569→   569→   569→Generates 2–3 NEW practice problems targeting the same concept but with different scenarios
+   570→   570→   570→Problems include: description, starter code, test cases, hints, difficulty rating
+   571→   571→   571→Generated problems are automatically reviewed by a second AI call for quality check (no broken test cases, no ambiguous descriptions)
+   572→   572→   572→Problems are personal — only visible to the user they were generated for
+   573→   573→   573→4.5.2 Problem Types Generated
+   574→   574→   574→"You struggled with HashMap collision handling. Here's a problem where you must implement a simple hash table with linear probing."
+   575→   575→   575→"Your SQL JOIN was slow. Here's a schema with 4 tables — write the most efficient query for this business question."
+   576→   576→   576→"You used 3 hints on the binary search exercise. Try this variation: find the first occurrence of a number in a sorted array with duplicates."
+   577→   577→   577→4.6 AI-Powered Error Explanation
+   578→   578→   578→4.6.1 Feature
+   579→   579→   579→When code compilation or execution fails, the raw error message is intercepted
+   580→   580→   580→AI translates error messages into human language:
+   581→   581→   581→NullPointerException at line 42 → "You're calling .length() on a variable called name at line 42, but name is null. This probably means the getName() method returned null. Add a null check before calling .length()."
+   582→   582→   582→Stack trace is parsed and simplified — only the relevant frames shown, not the entire Spring Boot stack trace
+   583→   583→   583→"Common fixes" section: "This error typically happens when... Try these 3 things..."
+   584→   584→   584→One-click "Apply Fix" if AI is confident enough (rare, only for trivial issues like missing import)
+   585→   585→   585→🟠 PHASE 5 — COMMUNITY & SOCIAL LAYER
+   586→   586→   586→Goal: Learning is social. Even solo learners should feel connected.
+   587→   587→   587→Timeline: Weeks 17–20
+   588→   588→   588→
+   589→   589→   589→5.1 Discussion System
+   590→   590→   590→5.1.1 Per-Lesson Threads
+   591→   591→   591→Every lesson and exercise has a dedicated discussion thread
+   592→   592→   592→Thread types: Question, Show & Tell, Confusion, Tip, Bug Report
+   593→   593→   593→Sorted by: Most Recent, Most Helpful, Unanswered (to help people find questions to answer)
+   594→   594→   594→AI auto-tags posts: "This is about HashMap" — enables cross-referencing
+   595→   595→   595→5.1.2 Rich Post Features
+   596→   596→   596→Markdown with code blocks (syntax highlighted)
+   597→   597→   597→Inline code references: "I'm stuck on Exercise 3.2" auto-links to that exercise
+   598→   598→   598→"Share My Code" button — posts current editor code directly into discussion
+   599→   599→   599→Reaction system: Helpful 👍, Confusing 😕, Brilliant 🤩, Same Problem 🙋
+   600→   600→   600→Accepted answer marking (by question author) — accepted answers float to top
+   601→   601→   601→5.1.3 AI Forum Assistant
+   602→   602→   602→AI scans new questions before they're posted
+   603→   603→   603→If AI finds an existing thread that answers the question: "This looks similar to [existing question]. Check there first?"
+   604→   604→   604→If AI can answer directly: "Before posting, AI says: This might help — [AI answer]. Still want to post?"
+   605→   605→   605→Reduces duplicate questions without blocking genuine ones
+   606→   606→   606→5.2 Live Collaboration
+   607→   607→   607→5.2.1 Pair Programming Sessions
+   608→   608→   608→"Find a Partner" button matches users at similar skill levels working on the same lesson
+   609→   609→   609→Real-time collaborative editor (CRDT-based, no conflicts)
+   610→   610→   610→Voice chat via WebRTC (optional)
+   611→   611→   611→"Driver/Navigator" roles that can be swapped
+   612→   612→   612→Session recording: replay the collaboration later for review
+   613→   613→   613→"Solo pair programming" with AI (if no human partner available)
+   614→   614→   614→5.2.2 Study Rooms
+   615→   615→   615→Persistent virtual rooms: "Java Study Group," "Spring Boot Builders," "ML Experimenters"
+   616→   616→   616→Room has: shared chat, shared code board (anyone can write), active member list
+   617→   617→   617→Scheduled events: "Saturday 4 PM — Group DSA practice"
+   618→   618→   618→Room activity feed: "Rahul solved Binary Search in this room"
+   619→   619→   619→5.3 Project Showcase & Portfolio
+   620→   620→   620→5.3.1 Public Profile Page
+   621→   621→   621→Auto-generated portfolio showing: completed paths, badges, projects, skill radar chart, activity graph
+   622→   622→   622→Custom URL: codeforge.dev/aman
+   623→   623→   623→Theme matches user's preference
+   624→   624→   624→"Embed" feature: generate embeddable widget for personal website/blogs
+   625→   625→   625→5.3.2 Project Showcase
+   626→   626→   626→Completed projects get a showcase page with: description, code (or GitHub link), screenshots/output, AI evaluation summary, badges earned
+   627→   627→   627→Community can upvote showcases
+   628→   628→   628→"Featured Projects" section on homepage (curated + top-voted)
+   629→   629→   629→"Remix" button: fork someone's project into your own sandbox and modify it
+   630→   630→   630→5.3.3 GitHub Integration
+   631→   631→   631→Connect GitHub account → automatically import repositories
+   632→   632→   632→"Verify" feature: platform checks that a project was actually built by the user (commit history analysis)
+   633→   633→   633→GitHub contribution graph synced with CodeForge activity (dual display)
+   634→   634→   634→5.4 Peer Code Review System
+   635→   635→   635→5.4.1 How It Works
+   636→   636→   636→After submitting a project, user can opt-in to peer review
+   637→   637→   637→System matches them with 2–3 other users who also opted in
+   638→   638→   638→Each reviewer gets: project code + rubric + guided review form
+   639→   639→   639→Rubric categories: Correctness, Code Quality, Documentation, Creativity, Testing
+   640→   640→   640→Reviewers earn XP for completing reviews (incentive to participate)
+   641→   641→   641→Reviewee sees anonymized reviews (reviewer identity hidden unless reviewer chooses to reveal)
+   642→   642→   642→5.4.2 Review Quality Control
+   643→   643→   643→AI checks review quality: "This review just says 'looks good' — add more detail"
+   644→   644→   644→Reviewee rates review helpfulness — low-rated reviewers get less review assignments
+   645→   645→   645→"Reviewer Badge" tiers: Bronze (5 reviews), Silver (25), Gold (50), Platinum (100)
+   646→   646→   646→5.5 Mentorship System
+   647→   647→   647→5.5.1 Becoming a Mentor
+   648→   648→   648→Users who reach Level 25 + pass a "Mentor Certification" challenge can apply
+   649→   649→   649→Mentor certification: pass a teaching assessment — explain a concept clearly in writing + review a piece of code well
+   650→   650→   650→Mentors get: "Mentor" badge, access to mentor dashboard, XP for mentoring
+   651→   651→   651→5.5.2 Mentor-Student Matching
+   652→   652→   652→Students can request a mentor (optional, not forced)
+   653→   653→   653→Matching based on: skill overlap, timezone, learning goals
+   654→   654→   654→Mentor dashboard: list of students, their progress, pending questions, suggested check-in times
+   655→   655→   655→Interaction channels: async messages, scheduled live sessions, code review requests
+   656→   656→   656→🔴 PHASE 6 — ADVANCED SYSTEMS & POLISH
+   657→   657→   657→Goal: Make CodeForge indistinguishable from a production product used by thousands.
+   658→   658→   658→Timeline: Weeks 21–24+
+   659→   659→   659→
+   660→   660→   660→6.1 Notification & Communication Hub
+   661→   661→   661→6.1.1 Unified Notification Center
+   662→   662→   662→In-app notification bell with categorized feed: Learning, Social, System, Achievements
+   663→   663→   663→Mark as read individually or bulk
+   664→   664→   664→Notification preferences per category: In-App / Email / Push / SMS / Off
+   665→   665→   665→"Digest mode" — instead of real-time, get one summary email per day
+   666→   666→   666→6.1.2 Smart Notification Rules
+   667→   667→   667→Don't notify about forum replies between 11 PM – 7 AM (respects sleep)
+   668→   668→   668→Batch non-urgent notifications: "You earned 3 badges and passed 5 exercises today" (one notification, not eight)
+   669→   669→   669→Priority queue: streak-at-risk > AI review ready > forum reply > badge earned > XP milestone
+   670→   670→   670→6.2 Advanced Analytics (Personal)
+   671→   671→   671→6.2.1 Learning Analytics Dashboard
+   672→   672→   672→Time Analysis: Heatmap of when you learn most effectively (day of week, time of day)
+   673→   673→   673→Performance Trends: Line graph of exercise scores over time with moving average
+   674→   674→   674→Weakness Map: Chord diagram showing which skills correlate with failures
+   675→   675→   675→Hint Dependency: "You use hints on 40% of exercises. Target: <20%"
+   676→   676→   676→Session Quality: "Your best sessions are 45–60 minutes long. Sessions under 15 minutes have 30% lower pass rates."
+   677→   677→   677→Prediction: "At your current pace, you'll reach Level 50 by March 2027"
+   678→   678→   678→6.2.2 "Year in Code" Annual Report
+   679→   679→   679→Inspired by Spotify Wrapped / GitHub Year in Review
+   680→   680→   680→Total hours coded, favorite topic, biggest improvement, longest streak, most replayed lesson, unique stats
+   681→   681→   681→Shareable as animated card
+   682→   682→   682→Generated automatically on user's signup anniversary
+   683→   683→   683→6.3 Offline & Low-Bandwidth Mode
+   684→   684→   684→6.3.1 Offline Capability
+   685→   685→   685→Service Worker caches: lesson content (markdown), exercise descriptions, quiz cards
+   686→   686→   686→User can read lessons and do quizzes offline
+   687→   687→   687→Code exercises: "offline draft" mode — write code locally, sync and submit when online
+   688→   688→   688→Streak protection: offline completion is counted when device reconnects (with timestamp proof)
+   689→   689→   689→6.3.2 Low-Bandwidth Mode
+   690→   690→   690→Detected automatically on slow connections
+   691→   691→   691→Disables: animations, images (replaced with alt text), live collaboration, AI chat
+   692→   692→   692→Enables: text-only mode, compressed content, deferred loading
+   693→   693→   693→Manual toggle available
+   694→   694→   694→6.4 Accessibility
+   695→   695→   695→6.4.1 Standards
+   696→   696→   696→WCAG 2.1 AA compliance (aim for AAA where feasible)
+   697→   697→   697→Full keyboard navigation — every interactive element reachable without mouse
+   698→   698→   698→Screen reader tested: NVDA, JAWS, VoiceOver
+   699→   699→   699→Focus management: modal dialogs trap focus, breadcrumbs show position
+   700→   700→   700→6.4.2 Accessibility Features
+   701→   701→   701→High contrast mode
+   702→   702→   702→Dyslexia-friendly font option (OpenDyslexic)
+   703→   703→   703→Adjustable font size (global, not just editor)
+   704→   704→   704→Reduced motion mode (disables all animations)
+   705→   705→   705→Color-blind safe palette (no red/green only distinctions)
+   706→   706→   706→Alt text on all images and diagrams
+   707→   707→   707→ARIA labels on all interactive elements
+   708→   708→   708→Skip-to-content link on every page
+   709→   709→   709→6.5 Internationalization (i18n)
+   710→   710→   710→6.5.1 Initial Languages
+   711→   711→   711→English (primary)
+   712→   712→   712→Hindi (secondary — since Aman's audience may include Hindi speakers)
+   713→   713→   713→6.5.2 Architecture
+   714→   714→   714→All user-facing strings externalized (no hardcoded text in components)
+   715→   715→   715→RTL support ready (for future Arabic/Urdu)
+   716→   716→   716→Content translation: lessons translated manually (AI translation not trusted for technical content)
+   717→   717→   717→UI translation: can use AI + human review
+   718→   718→   718→User language preference stored in profile, can be changed anytime
+   719→   719→   719→6.6 Certificate System
+   720→   720→   720→6.6.1 Certificate Types
+   721→   721→   721→Certificate
+   722→   722→   722→Earned By
+   723→   723→   723→Path Completion Finish all modules in a path
+   724→   724→   724→Skill Mastery   Score >90% on all exercises in a skill category
+   725→   725→   725→Project Certificate     Complete a guided project with excellent evaluation
+   726→   726→   726→Streak Legend   Maintain 100+ day streak
+   727→   727→   727→Community Contributor   50+ helpful forum posts
+   728→   728→   728→
+   729→   729→   729→6.6.2 Certificate Features
+   730→   730→   730→Auto-generated PDF with: user name, certificate type, date, unique verification code, QR code
+   731→   731→   731→Verification page: anyone can visit codeforge.dev/verify/ABC123 to confirm authenticity
+   732→   732→   732→LinkedIn share button with pre-formatted post
+   733→   733→   733→Digital badge (Open Badges standard) downloadable for wallet
+   734→   734→   734→Blockchain-anchored option (hash stored on-chain for tamper-proof verification) — stretch goal
+   735→   735→   735→6.7 Admin & Moderation Tools
+   736→   736→   736→6.7.1 Admin Dashboard
+   737→   737→   737→User management: search, filter, role assignment, account suspension/activation
+   738→   738→   738→Content management: all lessons/exercises/paths in one table with status filters
+   739→   739→   739→System health: active containers, queue lengths, error rates, response times
+   740→   740→   740→Financial: API usage costs (Claude API tokens, sandbox usage), projected monthly cost
+   741→   741→   741→A/B test management: create experiments, assign users, view results
+   742→   742→   742→6.7.2 Moderation Tools
+   743→   743→   743→Flagged content queue: forum posts, profile bios, project descriptions flagged by AI or users
+   744→   744→   744→Moderation actions: dismiss, warn user, hide content, suspend user (with reason and duration)
+   745→   745→   745→Mod log: all moderation actions logged with moderator name, timestamp, reason
+   746→   746→   746→Auto-moderation rules: "If post contains <specific spam pattern>, auto-hide and flag"
+   747→   747→   747→6.7.3 Content Flagging by AI
+   748→   748→   748→AI scans forum posts for: spam, harassment, sharing exercise solutions (cheating), off-topic
+   749→   749→   749→Confidence threshold: only flags if >85% confident (minimize false positives)
+   750→   750→   750→Human moderator always makes final decision
+   751→   751→   751→6.8 Performance & Infrastructure
+   752→   752→   752→6.8.1 Performance Budgets
+   753→   753→   753→Metric
+   754→   754→   754→Target
+   755→   755→   755→Page load (first contentful paint)      < 1.5 seconds
+   756→   756→   756→Code execution cold start       < 2 seconds
+   757→   757→   757→Code execution warm start       < 500 milliseconds
+   758→   758→   758→AI chat response (first token)  < 3 seconds
+   759→   759→   759→Leaderboard load        < 1 second
+   760→   760→   760→Search results  < 500 milliseconds
+   761→   761→   761→Dashboard with all widgets      < 2 seconds
+   762→   762→   762→
+   763→   763→   763→6.8.2 Caching Strategy
+   764→   764→   764→Redis: Session data, leaderboard rankings, streak counts, hot lesson content, quiz cards
+   765→   765→   765→CDN: Static assets, images, fonts, certificate templates
+   766→   766→   766→Application-level: Computed path progress (invalidated on exercise completion), skill scores
+   767→   767→   767→Browser: Service Worker cache for offline, HTTP cache headers for static content
+   768→   768→   768→6.8.3 Database Strategy
+   769→   769→   769→PostgreSQL: Primary data store — users, lessons, submissions, progress, forums
+   770→   770→   770→TimescaleDB (PostgreSQL extension): Time-series data — activity logs, performance metrics, API usage
+   771→   771→   771→Redis: Caching layer + real-time leaderboards (sorted sets)
+   772→   772→   772→MinIO: Object storage — avatars, project files, certificate PDFs, dataset files
+   773→   773→   773→Connection pooling (HikariCP) with monitoring
+   774→   774→   774→6.8.4 Search
+   775→   775→   775→Full-text search on: lessons, forum posts, exercises, documentation
+   776→   776→   776→Options: PostgreSQL full-text search (simplest) → Meilisearch (better relevance) → Elasticsearch (overkill for V1)
+   777→   777→   777→Search features: typo tolerance, faceted filters (by path, difficulty, type), "did you mean?" suggestions
+   778→   778→   778→6.9 Security (Non-Auth)
+   779→   779→   779→6.9.1 Application Security
+   780→   780→   780→Input sanitization: All user input sanitized — SQL parameters (never string concatenation), HTML escaping, XSS prevention
+   781→   781→   781→CORS: Strict origin whitelist for API
+   782→   782→   782→CSP: Content Security Policy headers preventing inline script execution
+   783→   783→   783→Rate limiting: Per-endpoint, per-user rate limits (Spring Boot + Bucket4J)
+   784→   784→   784→Request validation: All API inputs validated with Bean Validation (jakarta.validation)
+   785→   785→   785→HTTP headers: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+   786→   786→   786→Dependency scanning: OWASP Dependency-Check in CI/CD pipeline
+   787→   787→   787→Secrets management: Environment variables + vault (HashiCorp Vault or AWS Secrets Manager)
+   788→   788→   788→6.9.2 Sandbox Security (Critical)
+   789→   789→   789→Containers run with non-root user
+   790→   790→   790→seccomp profile blocking: clone, execve, mount, ptrace, keyctl
+   791→   791→   791→No network access (except for specific LLM integration exercises, which use a separate, heavily restricted network namespace)
+   792→   792→   792→No access to host filesystem, no access to other containers
+   793→   793→   793→Resource limits enforced at Docker level (not just application level)
+   794→   794→   794→Container escape monitoring: alert if any container attempts unexpected syscalls
+   795→   795→   795→Execution logs retained for forensic analysis if needed
+   796→   796→   796→6.9.3 AI Security
+   797→   797→   797→Prompt injection detection: user code/comments scanned for prompt injection before sending to AI API
+   798→   798→   798→AI responses filtered: never expose system prompts, never execute AI-suggested code on host
+   799→   799→   799→API key rotation: Claude API key rotated monthly
+   800→   800→   800→Token usage budget: per-user daily token limit (prevent cost runaway)
+   801→   801→   801→AI response caching: identical questions within 24 hours return cached response (saves tokens)
+   802→   802→   802→6.10 Monitoring & Observability
+   803→   803→   803→6.10.1 Application Monitoring
+   804→   804→   804→Metrics: Prometheus + Grafana — request rates, error rates, response times, JVM metrics (heap, GC, threads)
+   805→   805→   805→Logging: Structured JSON logs (Logback) → centralized in Loki or ELK
+   806→   806→   806→Tracing: OpenTelemetry for distributed tracing (especially important when AI service and execution service are separate)
+   807→   807→   807→Alerting: PagerDuty or equivalent for: error rate spike, sandbox crash rate, API cost anomaly, disk space low
+   808→   808→   808→6.10.2 Business Metrics Dashboard
+   809→   809→   809→DAU/MAU (Daily/Monthly Active Users)
+   810→   810→   810→Retention: D1, D7, D30 (what % return after 1/7/30 days)
+   811→   811→   811→Exercise pass rate distribution
+   812→   812→   812→Average time to complete a path
+   813→   813→   813→Streak distribution (how many people have 7+, 30+, 100+ day streaks)
+   814→   814→   814→AI chat satisfaction rate (thumbs up/down on AI responses)
+   815→   815→   815→Drop-off points (which lessons have highest abandonment)
+   816→   816→   816→6.10.3 Error Tracking
+   817→   817→   817→Sentry for frontend + backend error tracking
+   818→   818→   818→Source map support for React (readable stack traces)
+   819→   819→   819→Error grouping and alerting
+   820→   820→   820→"User impact" field: how many users were affected by this error
+   821→   821→   821→6.11 CI/CD Pipeline
+   822→   822→   822→6.11.1 Pipeline Stages
+   823→   823→   823→Lint & Format Check — Spotless (Java) + ESLint + Prettier (React) — fail if non-compliant
+   824→   824→   824→Unit Tests — JUnit (backend) + Jest (frontend) — minimum 80% coverage
+   825→   825→   825→Integration Tests — TestContainers for database-dependent tests
+   826→   826→   826→Security Scan — OWASP Dependency-Check + Trivy container scan
+   827→   827→   827→Build — Docker image build with version tag
+   828→   828→   828→Deploy to Staging — Auto-deploy, run smoke tests
+   829→   829→   829→Manual Approval — Click to promote to production (for V1; auto-deploy later)
+   830→   830→   830→Deploy to Production — Rolling update, zero-downtime
+   831→   831→   831→Post-Deploy Verification — Automated health checks + canary monitoring
+   832→   832→   832→6.11.2 Environments
+   833→   833→   833→Local: Docker Compose (PostgreSQL + Redis + MinIO + app)
+   834→   834→   834→Staging: Mirror of production, used for testing before release
+   835→   835→   835→Production: Live deployment
+   836→   836→   836→6.12 Data Privacy & Compliance
+   837→   837→   837→6.12.1 Data Handling
+   838→   838→   838→User code submissions: private by default, only shared if user explicitly publishes to showcase
+   839→   839→   839→AI chat logs: stored for 30 days (for improving AI quality), then anonymized (prompts kept, user identity stripped)
+   840→   840→   840→Email addresses: never shared, never visible to other users
+   841→   841→   841→Passwords: never stored (only bcrypt hashes)
+   842→   842→   842→Right to deletion: user can request full account deletion — all personal data, submissions, and forum posts deleted within 30 days
+   843→   843→   843→6.12.2 Cookie & Tracking
+   844→   844→   844→Essential cookies only (session, preferences)
+   845→   845→   845→Analytics: self-hosted Plausible or Umami (no Google Analytics — respects privacy)
+   846→   846→   846→No third-party cookies
+   847→   847→   847→Clear cookie consent banner (not the dark-pattern kind)
+   848→   848→   848→7. Complete Build Roadmap (Revised)
+   849→   849→   849→Milestone
+   850→   850→   850→Weeks
+   851→   851→   851→Deliverables
+   852→   852→   852→M1: Auth & Shell        1–2     Passkey + JWT auth, user profiles, basic React shell with routing, PostgreSQL + Redis setup, Docker Compose local dev
+   853→   853→   853→M2: Content Engine      3–4     Admin panel (CRUD lessons/modules/paths), markdown renderer, initial Java Fundamentals content (10 lessons), path dependency graph
+   854→   854→   854→M3: Playground  5–6     Monaco Editor integration, multi-file support, Docker sandbox execution, run code + see output, built-in terminal
+   855→   855→   855→M4: Auto-Grading        7–8     Exercise types (unit test, output match, code repair), test case engine, progressive hints, submission history
+   856→   856→   856→M5: Progress & XP       9–10    Progress dashboard, XP system, levels, streaks, activity graph, skill radar chart
+   857→   857→   857→M6: Gamification        11–12   Badges, achievements, daily challenge, weekly missions, leaderboard, spaced repetition quizzes, sound design
+   858→   858→   858→M7: AI Tutor    13–14   Claude API integration, contextual chat, AI code reviewer, error explanation, tutor modes (Socratic/Direct/Analogy)
+   859→   859→   859→M8: AI Advanced 15–16   AI pair programmer, personalized path generator, auto-generated practice problems, prompt engineering
+   860→   860→   860→M9: AI/ML Content       17–19   Math refresher, Weka module, Smile module, DL4J module, 3 guided projects, ML evaluation visualizer
+   861→   861→   861→M10: LLM Track  20–21   LLM integration lessons, API playground, RAG project, vector DB basics
+   862→   862→   862→M12: Community  22–23   Discussion forums per lesson, project showcase, peer code review, mentorship system
+   863→   863→   863→M13: Polish     24–26   Certificates, notifications hub, offline mode, accessibility audit, i18n, performance optimization, monitoring
+   864→   864→   864→M14: Launch     27–28   Final QA, security audit, load testing, deployment to production, domain setup, announcement
+   865→   865→   865→
+   866→   866→   866→8. Risk Register (Complete)
+   867→   867→   867→Risk
+   868→   868→   868→Probability
+   869→   869→   869→Impact
+   870→   870→   870→Mitigation
+   871→   871→   871→Scope creep     Very High       High    Strict phase gates — do not start Phase N until Phase N-1 is deployed and stable
+   872→   872→   872→Sandbox escape  Low     Critical        Defense in depth: seccomp + gVisor + non-root + no network + resource limits + monitoring
+   873→   873→   873→AI API costs spiral     Medium  High    Per-user daily token limits, aggressive caching, tiered access (AI features unlock at higher levels)
+   874→   874→   874→Content creation burnout        High    High    AI-assisted content generation (AI drafts, human reviews), start with only 1 fully complete path
+   875→   875→   875→Solo dev bottleneck     High    Medium  Modular architecture, everything API-first (could add another dev later), automate everything possible
+   876→   876→   876→Low motivation (self-project)   Medium  High    Public roadmap with weekly updates, share progress on Twitter/LinkedIn for accountability
+   877→   877→   877→Exercise test case quality      Medium  Medium  "Test the tests" workflow: reference solution must pass all tests, AI generates edge cases, community can flag bad tests
+   878→   878→   878→Browser performance     Medium  Medium  Lazy loading, code splitting, virtual scrolling for long lists, monitor Core Web Vitals
+   879→   879→   879→Data loss       Low     Critical        Daily automated PostgreSQL backups, tested restore procedure, off-site backup copy
+   880→   880→   880→
+   881→   881→   881→9. Success Metrics (Complete)
+   882→   882→   882→V1 Launch (Phase 1 Complete)
+   883→   883→   883→ User can sign up with passkey, complete profile
+   884→   884→   884→ User can browse paths, start "Java Fundamentals," complete 10+ lessons
+   885→   885→   885→ User can write and run Java code in browser
+   886→   886→   886→ User can submit exercises, get instant graded feedback
+   887→   887→   887→ User can see progress dashboard with XP, streak, completion %
+   888→   888→   888→ Admin can create/edit/publish lessons without deploying code
+   889→   889→   889→ Deployed on live URL, accessible from mobile
+   890→   890→   890→V2 Launch (Phase 2 Complete)
+   891→   891→   891→ All gamification systems working end-to-end
+   892→   892→   892→ Daily challenge active and rotating
+   893→   893→   893→ Leaderboard updating in real-time
+   894→   894→   894→ Spaced repetition quizzes functional with due card tracking
+   895→   895→   895→ Sound and visual feedback creating "game feel"
+   896→   896→   896→V3 Launch (Phase 3 Complete)
+   897→   897→   897→ At least 3 AI/ML modules fully built with exercises
+   898→   898→   898→ 2+ guided projects completable end-to-end
+   899→   899→   899→ ML model evaluation visualizations rendering correctly
+   900→   900→   900→ LLM integration track with working API playground
+   901→   901→   901→V4 Launch (Phase 4 Complete)
+   902→   902→   902→ AI Tutor responding contextually in <3 seconds
+   903→   903→   903→ AI Code Review providing actionable feedback
+   904→   904→   904→ Personalized path generator producing sensible recommendations
+   905→   905→   905→ Auto-generated practice problems matching user weak areas
+   906→   906→   906→V5 Launch (Phase 5 Complete)
+   907→   907→   907→ Forums active with real discussion
+   908→   908→   908→ Project showcase with at least 5 public projects
+   909→   909→   909→ Peer code review system matching and collecting reviews
+   910→   910→   910→ Certificate generation and verification working
+   911→   911→   911→Ultimate Success (12 months post-launch)
+   912→   912→   912→ Aman has completed every path and can explain every module independently
+   913→   913→   913→ Platform has 50+ registered users (even if mostly friends/colleagues)
+   914→   914→   914→ Aman's portfolio includes this as the #1 project with demo video
+   915→   915→   915→ At least 1 person (other than Aman) has completed a full path
+   916→   916→   916→ CodeForge is mentioned on Aman's LinkedIn as a flagship project
+   917→   917→   917→10. Open Decisions (To Be Resolved Before Starting)
+   918→   918→   918→Decision
+   919→   919→   919→Options
+   920→   920→   920→Recommendation
+   921→   921→   921→Code execution: Docker vs Judge0 API?   Self-hosted Docker (more control, more work) vs Judge0 (managed, costs money)   Start with Docker — it's a learning opportunity itself
+   922→   922→   922→AI provider: Claude vs GPT-4 vs local?  Anthropic Claude (best for code), OpenAI GPT-4 (popular), local LLM (free but weaker)   Claude API — best code understanding, reasonable pricing
+   923→   923→   923→Frontend: React vs Next.js?     React SPA (simpler) vs Next.js (SSR, SEO, more complex) React SPA — this is not a public SEO-heavy site, it's an app
+   924→   924→   924→Monorepo vs separate repos?     One repo (simpler CI/CD) vs separate repos (cleaner separation) Monorepo — solo dev, one place to manage
+   925→   925→   925→First path to build completely? Java Fundamentals (safest) vs something more exciting   Java Fundamentals — it's the foundation everything else depends on
+   926→   926→   926→
+   927→   927→   927→11. Guiding Quote
+   928→   928→   928→"The best way to learn something is to build something that requires it."
+   929→   929→   929→
+   930→   930→   930→CodeForge is not just the thing you're building — it is the thing that requires you to learn everything. Every feature in this document is a lesson disguised as a product feature. By the time you've built all of this, you won't just know Java, Spring Boot, React, AI/ML, Docker, and system design — you'll have proved it.
+   931→   931→   931→
+   932→   932→   932→

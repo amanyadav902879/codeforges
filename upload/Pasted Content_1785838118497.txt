@@ -1,0 +1,931 @@
+🔥 CodeForge ULTRA PRO MAX — Product Requirements Document
+Version: Ultimate Final
+Author: Aman (with Claude)
+Date: August 2026
+Status: Locked — This is THE version
+
+1. Executive Summary
+CodeForge ULTRA PRO MAX is not a learning platform. It is a living developer ecosystem that simulates real-world software engineering — complete with consequences, team dynamics, system failures, security breaches, and AI teammates — while teaching Java, Spring Boot, full-stack development, and AI/ML from zero to production-grade. Every feature exists to answer one question: "How do we make learning so addictive that skipping a day feels wrong?"
+
+This PRD represents the complete, unabridged, no-compromises vision. Every feature listed here is technically buildable. Prioritization is handled via phases — but nothing is deleted.
+
+2. Core Design Principles
+Principle
+Definition
+Anti-Pattern We Avoid
+Consequence-Driven Learning	Every action has a visible, felt outcome — good or bad	Passive reading with no stakes
+Infinite Freshness	AI generates new problems, scenarios, and projects daily	Fixed content that gets stale after one pass
+Cognitive Flow State	Difficulty auto-adjusts to keep user in the zone between bored and anxious	Too easy (boredom) or too hard (rage-quit)
+Real-World Simulation	Exercises mimic actual production scenarios, not toy examples	"Print hello world" style problems
+Social by Default	Even solo learners feel presence of others — activity feeds, ghosts, shadows	Lonely siloed experience
+Zero Wasted Time	Every second on platform builds skill — no filler, no busywork	20-minute videos for 2 minutes of content
+Visible Growth	Progress is tangible — graphs, stats, comparisons, artifacts	"I think I'm getting better?" uncertainty
+Delight in Details	Micro-animations, sound design, haptic feedback, easter eggs	Sterile, lifeless interface
+
+3. Target Users (Expanded)
+Persona
+Description
+Primary Need
+How CodeForge Serves Them
+Aman (Primary)	PHP/MySQL dev transitioning to Java + AI/ML	Structured hands-on path that respects his existing dev knowledge	Skill assessment skips known stuff; focuses on gaps
+The Career Switcher	Non-CS background, self-taught basics	Proof of skills + portfolio + structured learning	Auto-generated portfolio page + certificates + project showcase
+The CS Student	Knows theory, zero practical experience	Real projects to put on resume	Production-grade projects, not homework-level toys
+The Stuck Developer	2-3 years experience, hit a plateau	Break through to senior-level thinking	System design simulations, architecture challenges, code review drills
+The Team Lead	Wants to upskill a small team	Trackable progress, standardized knowledge	Team dashboards, skill gap reports, assigned paths
+The 5-Minute Commuter	Only has tiny pockets of time	Make progress in 5 minutes	Micro-learning mode, offline-capable lessons
+
+4. Complete Feature Universe
+🟢 PHASE 1 — THE FOUNDATION
+Goal: A deployed, usable platform where a user can sign up, learn, code, and get graded — end to end.
+Timeline: Weeks 1–4 (part-time)
+
+1.1 Authentication & Identity System
+1.1.1 Auth Methods
+Passkey-First Authentication — WebAuthn/FIDO2 as primary login method (no password needed)
+Password + TOTP — Traditional fallback with time-based one-time password via authenticator app
+Magic Link — Passwordless email login for quick access
+OAuth2/OIDC — GitHub, Google, Discord login with granular scope selection screen
+Biometric WebAuthn — Fingerprint/face recognition on supported devices
+1.1.2 Adaptive Risk Engine
+Device fingerprinting on every request — unknown device triggers step-up auth
+Geographic anomaly detection — impossible travel = instant lock + email alert
+Time-of-day anomaly — 3 AM login when user never logs in at night = extra verification
+Behavioral biometrics baseline — typing cadence, mouse movement patterns stored as fuzzy hash
+Risk score computed per request: LOW (allow) → MEDIUM (log) → HIGH (require MFA) → CRITICAL (deny + alert)
+All decisions logged in immutable audit trail
+1.1.3 Session Management
+JWT access tokens (15-minute TTL) + rotating refresh tokens (7-day TTL, one-time use)
+Token binding to device fingerprint — stolen token useless on different device
+Concurrent session control — user can see and terminate all active sessions
+"Kill Switch" — one-click revoke all sessions across all devices
+Session heatmap visible to user — "You logged in from these locations this month"
+1.1.4 Role & Permission System
+Role hierarchy: SUPER_ADMIN → ADMIN → MODERATOR → MENTOR → LEARNER → GUEST
+Permission granularity: not just "can edit lessons" but "can edit lessons in paths where they are assigned as mentor"
+Role assignment audit log — who assigned what role, when, why
+Temporary role elevation — "become moderator for 24 hours" for specific events
+1.1.5 Profile System
+Avatar (upload + auto-generated pixel art avatar based on username hash)
+Bio, location, website links (GitHub, LinkedIn, Twitter, personal site)
+Skill tags (auto-suggested based on completed lessons, manually adjustable)
+Learning stats summary (publicly viewable): total XP, streak, paths completed, rank
+Activity feed on profile: "Aman completed 'Concurrent HashMap Deep Dive' — 2 hours ago"
+Profile customization: banner image, theme color, badge showcase (select top 3 badges to display)
+1.2 Living Learning Paths
+1.2.1 Path Structure
+Path → Module → Lesson → Concept → Exercise → Challenge → Project
+Each path is a Directed Acyclic Graph (DAG), not a linear list — parallel tracks exist
+Example: After "Java Fundamentals," user can simultaneously pursue "Spring Boot" AND "DSA" — or pick one
+Prerequisite enforcement via graph traversal — cannot access node until all parent nodes completed (or challenge-passed)
+1.2.2 Adaptive Path Engine
+Performance scoring per lesson (accuracy, time taken, hints used, attempts)
+Weak area detection: if user scores <60% on "Collections," engine auto-injects 2-3 remedial lessons
+Strong area fast-forward: if user scores >95% on "OOP Basics," next related lesson marked as "challenge available — pass to skip"
+Path morphing: the path shape changes per user — no two users see identical path sequence
+"Review ahead" feature: user can peek at upcoming lessons (read-only, no exercises) to plan their week
+1.2.3 Difficulty Tiers Per Lesson
+Every lesson has three versions the user can switch between at any time:
+
+EXPLAIN LIKE I'M 5 — Analogies, visual diagrams, no jargon, extra hints in exercises
+STANDARD — Normal technical explanation, moderate hints
+EXPERT — Minimal explanation, assumes prior knowledge, no hints, harder test cases, time limits
+1.2.4 Real-World Context Wrappers
+Every lesson is framed inside a realistic scenario, not taught in isolation:
+
+"HashMap" is not taught as "a key-value data structure" — it's taught as "You're building a session store for 10 million users and need O(1) lookups"
+"Spring Security" is not "add this dependency" — it's "Your API is getting DDoS'd and someone is scraping user data — fix it"
+Context makes the "why" undeniable — user never asks "but when will I use this?"
+1.2.5 Path Versioning
+Every path has a semantic version (e.g., "Java Fundamentals v3.2.1")
+Changelog visible: "v3.2 added lesson on Records, updated exercise test cases for Java 21"
+Users who started on v3.0 can continue on v3.0 OR migrate to v3.2 (with diff shown)
+Deprecated lessons archived but accessible — "This lesson was replaced by X, but you can still view it"
+1.2.6 Initial Path Catalog (V1)
+Path
+Modules
+Est. Lessons
+Target Audience
+Java Fundamentals	Variables, OOP, Collections, Exceptions, Streams, Concurrency, I/O, Java 21 Features	45–55	Beginners + PHP devs
+Spring Boot Backend	IOC/DI, MVC, Data JPA, Security, REST, Testing, Actuator, WebSockets	35–45	Know Java, new to Spring
+Database Mastery	SQL Fundamentals, PostgreSQL Advanced, Indexing, Query Optimization, Transactions, Migration	25–30	Anyone
+DSA in Java	Arrays, LinkedLists, Trees, Graphs, DP, Sorting, Searching, Hashing	50–60	Interview prep
+Full-Stack with React	React Basics, State Management, API Integration, Auth Flow, Deployment	30–40	Backend devs going full-stack
+AI/ML with Java	Linear Algebra Refresher, Weka Basics, Smile for ML, DL4J for Deep Learning, Model Evaluation	30–40	New to AI/ML
+LLM Integration	Prompt Engineering, API Calling, RAG Systems, Vector DBs, Agent Building	15–20	Anyone curious about LLMs
+
+1.3 In-Browser Development Environment
+1.3.1 Editor Core
+Monaco Editor (VS Code's engine) embedded in browser
+Full Java IntelliSense: autocomplete, parameter hints, method signatures, quick fixes
+Multi-file support with full project tree (packages, resources, test folders)
+20+ built-in themes (One Dark, Dracula, Solarized, GitHub, etc.) + custom theme builder
+Custom font selection with ligature support (Fira Code, JetBrains Mono, etc.)
+Minimap navigation, breadcrumb trail, sticky scroll
+Multi-cursor editing, find & replace with regex, bracket matching, color decorators
+1.3.2 Integrated Debugger
+Set breakpoints by clicking line numbers
+Step over, step into, step out, continue
+Variable inspection panel — see current state of all variables at breakpoint
+Watch expressions — add custom expressions to monitor
+Call stack visualization
+Conditional breakpoints — "break only when i > 100"
+All running in-browser via WebSocket connection to sandboxed JVM
+1.3.3 Built-In Terminal
+Full terminal emulator (xterm.js) connected to sandbox container
+Pre-configured with: javac, java, mvn, gradle, git, curl, ps, top
+Command history, tab completion, ANSI color support
+User cannot access host system — container-isolated
+Terminal sessions persist within a lesson (don't lose state on refresh)
+1.3.4 Git Inside Browser
+Full git workflow: init, add, commit, branch, merge, rebase, log, diff, stash
+Visual diff viewer (side-by-side or unified)
+Branch visualization graph
+Pre-commit hooks that run basic linting
+"Git Lesson" path teaches git USING this built-in git — meta but effective
+1.3.5 Layout System
+Resizable panes: File Explorer | Editor | Output | Context Panel
+Pre-set layouts: "Coding Focus" (editor full width), "Lesson Side-by-Side," "Debug Mode" (editor + debugger + variables), "Collab Mode" (editor + chat)
+User can save custom layouts
+Each layout remembers its state per lesson
+1.3.6 Session Persistence
+All open files, unsaved changes, terminal history, cursor positions — saved to server
+User closes laptop, opens next day — exactly where they left off
+"Time Travel" — slider at bottom of editor lets user rewind to any point in current session's keystroke history
+1.4 Auto-Graded Exercise Engine
+1.4.1 Exercise Types
+Type
+Description
+Grading Method
+Code Output	"Write code that produces exactly this output"	Exact string match + regex tolerance
+Unit Test	"Implement this method to pass all tests"	JUnit test suite execution
+Code Repair	"This code has 3 bugs — find and fix them"	Diff comparison against known fix
+Architecture	"Design the class structure for this scenario"	Structural comparison (classes, relationships, patterns)
+SQL Query	"Write a query that returns this result set"	Result set comparison + execution plan check
+Fill in the Blank	"Complete this code snippet"	AST-level comparison of filled portion
+Refactoring	"Improve this code without changing behavior"	Behavior preservation tests + code quality metrics
+Debug Challenge	"This code crashes with input X — find why"	Root cause identification (multiple valid answers scored differently)
+
+1.4.2 Test Case Architecture
+Each exercise has: public test cases (visible to user) + hidden test cases (revealed only after submission)
+Hidden tests cover: edge cases, large inputs, null inputs, concurrent access, error conditions
+Test case tagging: @Smoke, @EdgeCase, @Performance, @Concurrency, @Security
+After pass: user sees which hidden tests existed (but not their code) — learning through test discovery
+After fail: user sees which test category failed (e.g., "Your solution fails on edge cases") without revealing the exact test
+1.4.3 Feedback System
+Instant pass/fail with execution time and memory usage
+Failure hints — progressive: 1st fail = category hint, 2nd fail = specific hint, 3rd fail = partial solution reveal
+Performance feedback — "Correct, but your solution is O(n²). Can you do O(n)?" (if optimal solution exists)
+Style feedback — "Works, but consider using Stream API here" (non-blocking suggestion)
+Comparison — "Your solution used 15 lines. The community median is 8 lines." (motivation, not shaming)
+1.4.4 Anti-Cheat Measures
+Code similarity detection across all submissions (MOSS-style) — flag but don't auto-punish
+Copy-paste detection — if user pastes code from outside, log it (not block — sometimes legitimate)
+Time anomaly detection — solved in 3 seconds? Flag for review
+Submission frequency limiting — max 10 submissions per minute per exercise
+1.5 Content Authoring System (Admin Panel)
+1.5.1 Lesson Editor
+Markdown-based authoring with live preview
+Custom extensions: code blocks with language tagging, callout boxes (warning, tip, info, danger), collapsible sections, tabbed content, interactive diagrams
+Embedded exercise builder — write test cases directly in the lesson editor
+Drag-and-drop lesson reordering within modules
+Lesson duplication (for creating variants)
+Draft/Published/Archived states with scheduled publishing
+1.5.2 Exercise Builder
+Write Java method signature → write JUnit test cases → define hints → set difficulty → publish
+Test case editor with expected output, input generators, and timeout settings
+"Test against reference solution" button — validates that test cases correctly pass the reference solution
+Batch import exercises from JSON/YAML (for migrating content)
+Exercise versioning — if test cases are updated, previous submissions are re-graded automatically
+1.5.3 Media Management
+Image upload with automatic compression and responsive srcset generation
+Diagram embed support (Mermaid, PlantUML, Excalidraw)
+Code snippet library — reusable code blocks across lessons
+Asset tagging and search
+1.5.4 Content Analytics
+Per-lesson: completion rate, average score, average time, drop-off point (where do people stop reading?)
+Per-exercise: pass rate, hint usage rate, average attempts, most common failure category
+"Content rot" detection — if pass rate on an exercise suddenly drops, flag for review (maybe a test case is broken)
+1.6 Progress Tracking Dashboard
+1.6.1 Visual Progress
+Per-path progress ring (circular progress bar with percentage)
+Module-level progress bars within each path
+Lesson-level checkmarks (not started → in progress → completed → mastered)
+"Mastered" status: completed + scored >90% + didn't use hints + completed within time threshold
+1.6.2 Activity Metrics
+Total time spent (today, this week, this month, all time)
+Code lines written (today, this week, all time)
+Exercises completed (with pass rate percentage)
+Streak calendar (GitHub-style contribution graph — green squares for each day)
+"Active learning time" vs "idle time" — doesn't count time when tab is not focused
+1.6.3 Skill Radar Chart
+Spider/radar chart showing skill levels across dimensions: OOP, Collections, Concurrency, SQL, Spring, Testing, DSA, AI/ML
+Skills auto-calculated from exercise performance in tagged categories
+Visual gap analysis — "Your concurrency skill is lagging behind your other skills"
+1.6.4 Learning Velocity
+Graph showing lessons completed per week — is user speeding up or slowing down?
+Predicted completion date for current path based on velocity trend
+"At this pace, you'll finish Java Fundamentals by September 15"
+1.7 Code Execution Sandbox
+1.7.1 Sandbox Architecture
+Each code execution spawns an isolated Docker container with:
+Resource limits: 512MB RAM, 1 CPU core, 10-second execution timeout, 50MB disk
+Network disabled (no outbound connections from user code)
+No access to host filesystem
+Process killed if exceeds limits
+Container pool for warm starts — pre-spawned containers reduce cold-start latency to <500ms
+Container recycling after each execution (no state leakage between runs)
+1.7.2 Execution Flow
+User clicks "Run" → code + dependencies sent to execution service → container selected from pool → code compiled → executed → stdout/stderr captured → container killed/recycled → results sent back via WebSocket
+For debugging: container stays alive, WebSocket keeps connection open for breakpoint interactions
+Max 3 concurrent containers per user (prevents resource abuse)
+1.7.3 Security Measures
+seccomp profile restricting system calls (no fork, no exec, no network sockets)
+gVisor runtime option for defense-in-depth (kernel-level isolation)
+Execution logs archived for 7 days (for debugging sandbox issues, not for spying on users)
+Rate limiting: max 60 executions per hour per user
+🟡 PHASE 2 — GAMIFICATION & ENGAGEMENT ENGINE
+Goal: Make the platform genuinely addictive — not fake gamification, but meaningful progression that taps into intrinsic and extrinsic motivation.
+Timeline: Weeks 5–8
+
+2.1 XP & Leveling System
+2.1.1 XP Sources
+Action
+XP Amount
+Notes
+Complete a lesson (read all content)	10 XP	Must scroll to bottom + spend minimum time
+Pass exercise on first attempt	50 XP	No hints used
+Pass exercise on second attempt	35 XP	
+Pass exercise on third+ attempt	20 XP	
+Complete exercise in EXPERT mode	2x multiplier	Applied on top of base XP
+Complete exercise under time limit	1.5x multiplier	Time limit varies per exercise
+Find a bug in platform content	100 XP	Verified bug report
+Help another user in forum	25 XP	Answer marked as "helpful"
+Daily login	5 XP	Just opening the platform
+Complete a module	200 XP	Bonus for finishing a group of lessons
+Complete a path	1000 XP	Major milestone
+Build a project	500 XP	Full project submission
+Write a solution explanation	15 XP	After solving, explain your approach
+
+2.1.2 Level Curve
+Level 1–10: 100 XP per level (fast early progression — dopamine hits)
+Level 11–25: 250 XP per level
+Level 26–50: 500 XP per level
+Level 51–100: 1000 XP per level
+Total XP for Level 100: ~65,000 XP (roughly 6–9 months of consistent daily use)
+Each level-up triggers: visual burst animation, level badge update, unlock notification
+2.1.3 Level Unlocks
+Level
+Unlock
+3	Custom avatar upload
+5	Access to "Expert Mode" difficulty tier
+8	Access to Daily Challenge
+10	Can post in discussion forums
+15	Access to Project Sandbox
+20	Can submit path improvement proposals
+25	"Mentor" role eligibility
+30	Access to AI/ML tracks
+50	"Advanced" badge + custom title
+100	"CodeForge Master" — permanent badge + featured on homepage
+
+2.2 Badges & Achievements
+2.2.1 Badge Categories
+Category
+Example Badges
+Trigger
+Streak	"7-Day Streak," "30-Day Streak," "100-Day Streak," "Unbreakable" (365 days)	Consecutive days with at least one exercise
+Skill	"Collections Master," "Concurrency King," "SQL Wizard"	Score >90% on all exercises in a skill category
+Speed	"Lightning Fingers," "Speed Demon"	Complete exercise under extreme time limit
+Perfection	"Flawless Module," "Perfect Path"	100% first-attempt pass rate in a module/path
+Exploration	"Path Crosser," "Polyglot"	Complete lessons in multiple different paths
+Community	"Good Samaritan," "Teacher"	Help 10/50 users in forums
+Secret	"The Matrix," "404 Not Found," "Rickroll"	Hidden triggers — easter eggs
+Project	"First Ship," "Full-Stacker," "AI Builder"	Complete specific project milestones
+Grind	"Century" (100 exercises), "Kilobyte" (1000 exercises)	Total exercise count milestones
+Time	"Night Owl" (complete exercise between 12–5 AM), "Early Bird" (before 7 AM)	Time-based
+
+2.2.2 Badge Display
+Badge grid on profile page with rarity indicators (Common → Rare → Epic → Legendary → Mythic)
+Animated badge cards — legendary badges have particle effects
+"Badge of the Day" spotlight on homepage
+Badge progress tracking — "You're 3 away from '30-Day Streak' — don't break it!"
+2.3 Daily & Weekly Engagement Systems
+2.3.1 Daily Challenge
+One challenge per day, available for 24 hours only
+Difficulty: slightly above user's current level (zone of proximal development)
+Types rotate: code challenge, debug challenge, SQL challenge, architecture challenge
+Bonus XP: 75 XP (higher than regular exercises)
+Streak bonus: consecutive daily challenges multiply XP (day 1: 1x, day 7: 2x, day 30: 3x)
+Leaderboard specifically for daily challenge (resets daily — everyone starts equal)
+2.3.2 Weekly Mission
+Multi-step mission spanning the week: "Complete 5 lessons in Spring Boot + pass 3 DSA problems + help 1 user in forum"
+Progress bar visible all week
+Completion reward: 300 XP + unique weekly badge
+Missions adapt to user's current path — no point giving a Spring mission to someone learning DSA
+2.3.3 Streak System
+Visual streak counter on every page (cannot be ignored)
+Streak freeze: earn 1 freeze per week (can use to protect streak for one missed day)
+Streak recovery: if streak breaks, "recovery challenge" offered — complete a hard problem to restore half the streak
+Streak milestones: 7, 14, 30, 60, 90, 180, 365 — each with special notification + reward
+"Streak at risk" notification at 8 PM if user hasn't done anything today
+2.3.4 Engagement Notifications
+Browser push notifications (opt-in): "Your streak is at risk! 📛 3 hours left."
+Email digest (daily or weekly, user choice): "You solved 12 problems this week. Your concurrency skill improved by 15%."
+Smart timing: notifications sent based on user's usual active hours (not random)
+"Nudge, not nag" philosophy: max 2 notifications per day, always actionable
+2.4 Leaderboard System
+2.4.1 Leaderboard Types
+Type
+Timeframe
+Scope
+Daily Challenge	Resets daily	Global
+Weekly XP	Resets Monday	Global + Friends
+All-Time XP	Cumulative	Global + Friends
+Per-Path	Cumulative	Everyone who started that path
+Streak	Current active streak	Global
+First Attempt Rate	% of exercises passed on first try	Global (minimum 50 exercises to qualify)
+
+2.4.2 Leaderboard Features
+"Friends" filter — only see people you've added as friends (reduces intimidation)
+"Near Me" — show 3 people directly above and below you (motivating without overwhelming)
+Animated rank changes — if you pass someone, you see yourself move up
+Historical rank graph — "You were #342 last week, now you're #218"
+Opt-out available — some users genuinely dislike leaderboards (respect that)
+2.5 Spaced Repetition Quiz Engine
+2.5.1 How It Works
+Every completed lesson generates 3–5 quiz cards (auto-generated from lesson content by AI)
+Cards scheduled for review using modified SM-2 algorithm (like Anki):
+Review 1: 1 day after learning
+Review 2: 3 days after
+Review 3: 7 days after
+Review 4: 14 days after
+Review 5: 30 days after
+Continues with increasing intervals
+If user fails a review, interval resets to beginning
+"Due reviews" shown as a badge count on the main navigation — "You have 7 reviews due"
+2.5.2 Quiz Formats
+Multiple choice (single answer)
+Multiple choice (multiple answers)
+Code output prediction ("What does this print?")
+Fill in the blank (type the missing code)
+True/False with explanation required for wrong answers
+"Connect the dots" — match concept to definition
+2.5.3 Review Session Design
+Sessions capped at 10 minutes or 20 cards (whichever comes first)
+Cards due today shown in priority order (most overdue first)
+"Quick Review" mode: no explanations, just rapid-fire Q&A
+"Deep Review" mode: wrong answers trigger full lesson snippet re-display
+2.6 Sound Design & Haptic Feedback
+2.6.1 Sound Effects (opt-in, respectful)
+Correct answer: satisfying "ding" (different pitch based on XP earned)
+Wrong answer: soft "thud" (not punishing, just informative)
+Level up: ascending musical arpeggio
+Badge earned: "achievement unlocked" chime
+Streak break: low somber tone (motivating, not depressing)
+Button click: subtle tactile click
+Code run: "whoosh" of execution starting
+2.6.2 Visual Feedback
+XP gain: floating "+50 XP" number that drifts upward and fades
+Streak: fire emoji that grows with streak length
+Error: subtle screen shake (can be disabled for accessibility)
+Success: confetti micro-burst on exercise completion
+Level up: full-screen celebration animation (skippable for users who find it annoying)
+🔵 PHASE 3 — AI/ML LEARNING TRACKS
+Goal: Teach AI/ML practically, entirely in Java (with optional Python bridge), producing real working models.
+Timeline: Weeks 9–12
+
+3.1 Java-Native AI/ML Curriculum
+3.1.1 Module: Math Refresher for ML
+Linear algebra: vectors, matrices, operations (using EJML library — pure Java)
+Calculus essentials: derivatives, gradients (visual, not proof-heavy)
+Probability & statistics: distributions, Bayes theorem, p-values
+Every concept has a coding exercise: "Implement matrix multiplication from scratch, then compare with EJML"
+3.1.2 Module: Classical ML with Weka
+Loading and exploring datasets (ARFF, CSV)
+Data preprocessing: normalization, missing value handling, feature selection
+Supervised learning: Decision Trees, Random Forest, Naive Bayes, SVM
+Unsupervised learning: K-Means, Hierarchical Clustering
+Evaluation: cross-validation, confusion matrix, precision/recall/F1
+Project: Build a loan approval classifier using real Kaggle dataset
+3.1.3 Module: ML with Smile (Statistical Machine Intelligence and Learning Engine)
+Regression: Linear, Ridge, Lasso, Polynomial
+Classification: Logistic Regression, Gradient Boosted Trees, Neural Networks (basic)
+Feature engineering: PCA, t-SNE visualization
+Model comparison: train multiple models, compare with statistical tests
+Project: House price prediction with model comparison dashboard
+3.1.4 Module: Deep Learning with DL4J (DeepLearning4J)
+Neural network fundamentals: perceptron, activation functions, backpropagation
+Building networks with DL4J: MultiLayerNetwork, ComputationGraph
+CNNs for image classification: build a digit recognizer (MNIST)
+RNNs/LSTMs for sequence data: build a text generator
+Transfer learning: use pre-trained models
+Project: Fashion item classifier using CNN on Fashion-MNIST
+3.1.5 Module: Model Evaluation & Visualization
+Confusion matrix heatmap (rendered in-browser using D3.js or Chart.js)
+Accuracy/loss curves over training epochs
+ROC curves and AUC calculation
+Learning curve analysis (bias vs variance diagnosis)
+Feature importance visualization
+All visualizations auto-generated when user submits a trained model
+3.2 Python Bridge Track (Optional)
+3.2.1 Positioning
+Clearly labeled as: "Industry Standard Tools — Most ML jobs use Python. This track teaches you the Python ML ecosystem."
+Assumes user already knows Java from previous tracks — focuses only on Python + ML library differences
+Not a full Python course — just enough Python to use ML libraries
+3.2.2 Content
+Python crash course for Java developers (syntax mapping: Java ↔ Python)
+NumPy: arrays, operations (compared to EJML)
+Pandas: DataFrames (compared to SQL)
+scikit-learn: same algorithms as Weka/Smile but in Python
+Matplotlib/Seaborn: visualization
+PyTorch basics: compared to DL4J
+Project: Rebuild the same loan classifier in Python — compare results with Java version
+3.2.3 Execution
+Python code runs in same sandbox system but with Python Docker image
+User can have Java and Python files in same project (polyglot exercises)
+3.3 AI/ML Project Sandbox
+3.3.1 Guided Projects
+Project
+Skills Used
+Difficulty
+Est. Time
+Spam Email Classifier	Weka, NLP basics, feature extraction	Intermediate	2–3 hours
+Handwritten Digit Recognizer	DL4J, CNN, image preprocessing	Advanced	3–4 hours
+Movie Review Sentiment Analyzer	Smile, text vectorization, classification	Intermediate	2–3 hours
+Customer Segmentation Engine	Smile, K-Means, PCA visualization	Intermediate	2 hours
+Stock Price Predictor	DL4J, LSTM, time series	Advanced	4–5 hours
+Image Style Transfer	DL4J, pre-trained models, image processing	Expert	5–6 hours
+Chatbot with NLP	Custom NLP pipeline, intent classification	Advanced	4–5 hours
+Recommendation Engine	Collaborative filtering, matrix factorization	Advanced	3–4 hours
+
+3.3.2 Project Structure
+Each project has: Overview → Data Exploration → Step-by-Step Guide → Starter Code → Evaluation Criteria → Extension Ideas
+User works in full project environment (multiple files, data files, model saving)
+Submission: upload trained model + code + short written explanation
+Evaluation: automated test (does model meet accuracy threshold?) + AI review of code quality + explanation quality
+3.3.3 Datasets
+Hosted on platform (pre-loaded into sandbox): MNIST, Iris, Titanic, SpamAssassin, Movie Reviews, etc.
+"Bring Your Own Dataset" option for advanced users
+Dataset browser: search by type (classification, regression, clustering, NLP, image), size, difficulty
+3.4 LLM Integration Track
+3.4.1 Content
+Understanding LLMs: tokens, context windows, temperature, top-p (conceptual, no math)
+API calling from Java: HTTP client setup, authentication, request/response handling
+Prompt engineering: system prompts, few-shot, chain-of-thought, structured output
+Building a chatbot: conversation history management, streaming responses
+RAG (Retrieval-Augmented Generation): embedding generation, vector storage, similarity search, context injection
+Vector databases: introduction to pgvector (PostgreSQL extension), basic operations
+Building a RAG application: "Chat with your codebase" — upload Java files, ask questions, get answers with source references
+Agent building: tool-use patterns, function calling, multi-step reasoning
+Project: Build a "Code Documentation Generator" — feed it Java code, get Markdown docs
+3.4.2 LLM Playground
+Sandbox environment pre-configured with API key (rate-limited per user)
+Built-in prompt testing interface: write prompt → see response → iterate
+Prompt versioning: save and compare prompt variants
+Token usage tracking: "This prompt used 450 tokens. Cost estimate: $0.002"
+Response quality self-assessment: "Did this response answer your question? Yes/No/Partial" (feeds into prompt improvement suggestions)
+🟣 PHASE 4 — AI-POWERED LEARNING ASSISTANT
+Goal: Every user has a 24/7 AI mentor, code reviewer, pair programmer, and study planner.
+Timeline: Weeks 13–16
+
+4.1 AI Code Reviewer
+4.1.1 How It Works
+After exercise submission (pass or fail), user can click "AI Review"
+Code sent to Claude API with structured prompt including: exercise description, test cases, user's code, reference solution
+AI returns structured review: Bugs → Style Issues → Performance → Better Approaches → Praise (always end positive)
+4.1.2 Review Categories
+Category
+What AI Checks
+Correctness	Logic errors, off-by-one, null handling, edge cases missed
+Performance	Time complexity, unnecessary iterations, memory allocation patterns
+Java Idioms	Not using streams where appropriate, not using try-with-resources, boxing/unboxing issues
+Naming	Variable/method names that don't convey intent
+Structure	Method length, class responsibility, coupling
+Security	SQL injection patterns, hardcoded secrets, unsafe deserialization
+Best Practices	SOLID violations, DRY violations, missing null checks
+
+4.1.3 Review Presentation
+Inline annotations on code (like GitHub PR review comments)
+Overall score: 1–5 stars
+"Fix all" button: applies AI-suggested fixes automatically (user can accept/reject individually)
+Review history: see how your code quality score trends over time
+4.2 AI Tutor Chatbot
+4.2.1 Context-Aware Chat
+Chat is embedded in every lesson/exercise page
+AI automatically receives: current lesson content, user's code, test results, error messages, user's skill level, learning history
+No need to re-explain context — "Why did my test fail?" already knows which test and what the code looks like
+4.2.2 Tutor Modes
+Mode
+Trigger
+Behavior
+Socratic	Default	Asks guiding questions instead of giving answers: "What do you think happens when you pass null here?"
+Direct	User says "just tell me" or after 3 failed Socratic attempts	Gives straightforward answer with explanation
+Visual	User says "show me"	Generates Mermaid diagrams, ASCII art, or describes visual concepts
+Analogy	User says "explain like I'm 5"	Uses real-world analogies: "A HashMap is like a restaurant — the key is your name, the value is your order..."
+Challenge	User seems confident	"Think you know this? Try this harder version..."
+
+4.2.3 Conversation Features
+Conversation history persisted per lesson (can review past conversations)
+"Pin" important messages for later reference
+Export conversation as Markdown notes
+AI proactively suggests: "I noticed you struggled with generics in the last 3 exercises. Want me to create a quick practice set?"
+4.2.4 Guardrails
+AI will NEVER write the complete exercise solution (violates learning purpose)
+AI can give hints, explain concepts, point to documentation, show similar but different examples
+If user repeatedly asks for direct answers, AI gently redirects: "I could tell you, but you'll remember 10x better if you figure it out. Here's a hint..."
+Fallback: if AI can't help (rare), direct user to the lesson discussion forum
+4.3 AI Pair Programmer
+4.3.1 Feature
+Toggle "AI Pair" mode in the editor
+AI observes your code as you type
+AI offers suggestions via inline ghost text (like GitHub Copilot) — but EDUCATIONALLY:
+Doesn't just write code — suggests with explanation tooltip on hover
+"Suggestion: Use var here (Java 10+). Reason: Type is obvious from right side, reduces clutter."
+User can accept (Tab), reject (Esc), or ask "Why?" (opens chat with context)
+4.3.2 Pair Programming Modes
+Mode
+Behavior
+Silent	Only suggests when you pause for 5+ seconds (non-intrusive)
+Active	Suggests as you type (like Copilot)
+Challenge	AI writes code, YOU review it and find bugs intentionally inserted
+Reverse	You describe what you want in plain English, AI writes it, you study the output
+
+4.4 Personalized Learning Path Generator
+4.4.1 Skill Gap Analysis
+AI analyzes: all exercise scores, quiz review performance, time spent per topic, hint usage patterns
+Generates skill map with confidence levels: "Strong" / "Adequate" / "Weak" / "Gap"
+Produces natural language report: "You're strong in OOP and basic Spring, but your concurrency skills are weak and you have a gap in SQL optimization"
+4.4.2 Personalized Path Proposal
+Based on skill gaps + user's goal (selected during onboarding: "I want to become a backend developer" / "I want to learn AI/ML" / "I want to pass interviews")
+AI generates a custom path: "Here's your personalized 8-week plan. Week 1–2: Fix concurrency gaps. Week 3–4: SQL deep dive. Week 5–8: Spring Boot advanced + project"
+User can accept, modify (drag modules around), or reject ("No, I want to focus on AI/ML instead")
+Path updates weekly based on new performance data
+4.4.3 "What Should I Do Next?" Button
+Always-visible button that asks AI for the single best next action
+Considers: streak status, due reviews, time of day, energy level (inferred from performance patterns), upcoming deadlines
+"It's 10 PM and you've been coding for 45 minutes. Do 3 spaced repetition reviews (5 min) and call it a day. Your streak will be safe."
+4.5 Auto-Generated Practice Problems
+4.5.1 Generation Pipeline
+AI analyzes exercises where user scored low or used many hints
+Generates 2–3 NEW practice problems targeting the same concept but with different scenarios
+Problems include: description, starter code, test cases, hints, difficulty rating
+Generated problems are automatically reviewed by a second AI call for quality check (no broken test cases, no ambiguous descriptions)
+Problems are personal — only visible to the user they were generated for
+4.5.2 Problem Types Generated
+"You struggled with HashMap collision handling. Here's a problem where you must implement a simple hash table with linear probing."
+"Your SQL JOIN was slow. Here's a schema with 4 tables — write the most efficient query for this business question."
+"You used 3 hints on the binary search exercise. Try this variation: find the first occurrence of a number in a sorted array with duplicates."
+4.6 AI-Powered Error Explanation
+4.6.1 Feature
+When code compilation or execution fails, the raw error message is intercepted
+AI translates error messages into human language:
+NullPointerException at line 42 → "You're calling .length() on a variable called name at line 42, but name is null. This probably means the getName() method returned null. Add a null check before calling .length()."
+Stack trace is parsed and simplified — only the relevant frames shown, not the entire Spring Boot stack trace
+"Common fixes" section: "This error typically happens when... Try these 3 things..."
+One-click "Apply Fix" if AI is confident enough (rare, only for trivial issues like missing import)
+🟠 PHASE 5 — COMMUNITY & SOCIAL LAYER
+Goal: Learning is social. Even solo learners should feel connected.
+Timeline: Weeks 17–20
+
+5.1 Discussion System
+5.1.1 Per-Lesson Threads
+Every lesson and exercise has a dedicated discussion thread
+Thread types: Question, Show & Tell, Confusion, Tip, Bug Report
+Sorted by: Most Recent, Most Helpful, Unanswered (to help people find questions to answer)
+AI auto-tags posts: "This is about HashMap" — enables cross-referencing
+5.1.2 Rich Post Features
+Markdown with code blocks (syntax highlighted)
+Inline code references: "I'm stuck on Exercise 3.2" auto-links to that exercise
+"Share My Code" button — posts current editor code directly into discussion
+Reaction system: Helpful 👍, Confusing 😕, Brilliant 🤩, Same Problem 🙋
+Accepted answer marking (by question author) — accepted answers float to top
+5.1.3 AI Forum Assistant
+AI scans new questions before they're posted
+If AI finds an existing thread that answers the question: "This looks similar to [existing question]. Check there first?"
+If AI can answer directly: "Before posting, AI says: This might help — [AI answer]. Still want to post?"
+Reduces duplicate questions without blocking genuine ones
+5.2 Live Collaboration
+5.2.1 Pair Programming Sessions
+"Find a Partner" button matches users at similar skill levels working on the same lesson
+Real-time collaborative editor (CRDT-based, no conflicts)
+Voice chat via WebRTC (optional)
+"Driver/Navigator" roles that can be swapped
+Session recording: replay the collaboration later for review
+"Solo pair programming" with AI (if no human partner available)
+5.2.2 Study Rooms
+Persistent virtual rooms: "Java Study Group," "Spring Boot Builders," "ML Experimenters"
+Room has: shared chat, shared code board (anyone can write), active member list
+Scheduled events: "Saturday 4 PM — Group DSA practice"
+Room activity feed: "Rahul solved Binary Search in this room"
+5.3 Project Showcase & Portfolio
+5.3.1 Public Profile Page
+Auto-generated portfolio showing: completed paths, badges, projects, skill radar chart, activity graph
+Custom URL: codeforge.dev/aman
+Theme matches user's preference
+"Embed" feature: generate embeddable widget for personal website/blogs
+5.3.2 Project Showcase
+Completed projects get a showcase page with: description, code (or GitHub link), screenshots/output, AI evaluation summary, badges earned
+Community can upvote showcases
+"Featured Projects" section on homepage (curated + top-voted)
+"Remix" button: fork someone's project into your own sandbox and modify it
+5.3.3 GitHub Integration
+Connect GitHub account → automatically import repositories
+"Verify" feature: platform checks that a project was actually built by the user (commit history analysis)
+GitHub contribution graph synced with CodeForge activity (dual display)
+5.4 Peer Code Review System
+5.4.1 How It Works
+After submitting a project, user can opt-in to peer review
+System matches them with 2–3 other users who also opted in
+Each reviewer gets: project code + rubric + guided review form
+Rubric categories: Correctness, Code Quality, Documentation, Creativity, Testing
+Reviewers earn XP for completing reviews (incentive to participate)
+Reviewee sees anonymized reviews (reviewer identity hidden unless reviewer chooses to reveal)
+5.4.2 Review Quality Control
+AI checks review quality: "This review just says 'looks good' — add more detail"
+Reviewee rates review helpfulness — low-rated reviewers get less review assignments
+"Reviewer Badge" tiers: Bronze (5 reviews), Silver (25), Gold (50), Platinum (100)
+5.5 Mentorship System
+5.5.1 Becoming a Mentor
+Users who reach Level 25 + pass a "Mentor Certification" challenge can apply
+Mentor certification: pass a teaching assessment — explain a concept clearly in writing + review a piece of code well
+Mentors get: "Mentor" badge, access to mentor dashboard, XP for mentoring
+5.5.2 Mentor-Student Matching
+Students can request a mentor (optional, not forced)
+Matching based on: skill overlap, timezone, learning goals
+Mentor dashboard: list of students, their progress, pending questions, suggested check-in times
+Interaction channels: async messages, scheduled live sessions, code review requests
+🔴 PHASE 6 — ADVANCED SYSTEMS & POLISH
+Goal: Make CodeForge indistinguishable from a production product used by thousands.
+Timeline: Weeks 21–24+
+
+6.1 Notification & Communication Hub
+6.1.1 Unified Notification Center
+In-app notification bell with categorized feed: Learning, Social, System, Achievements
+Mark as read individually or bulk
+Notification preferences per category: In-App / Email / Push / SMS / Off
+"Digest mode" — instead of real-time, get one summary email per day
+6.1.2 Smart Notification Rules
+Don't notify about forum replies between 11 PM – 7 AM (respects sleep)
+Batch non-urgent notifications: "You earned 3 badges and passed 5 exercises today" (one notification, not eight)
+Priority queue: streak-at-risk > AI review ready > forum reply > badge earned > XP milestone
+6.2 Advanced Analytics (Personal)
+6.2.1 Learning Analytics Dashboard
+Time Analysis: Heatmap of when you learn most effectively (day of week, time of day)
+Performance Trends: Line graph of exercise scores over time with moving average
+Weakness Map: Chord diagram showing which skills correlate with failures
+Hint Dependency: "You use hints on 40% of exercises. Target: <20%"
+Session Quality: "Your best sessions are 45–60 minutes long. Sessions under 15 minutes have 30% lower pass rates."
+Prediction: "At your current pace, you'll reach Level 50 by March 2027"
+6.2.2 "Year in Code" Annual Report
+Inspired by Spotify Wrapped / GitHub Year in Review
+Total hours coded, favorite topic, biggest improvement, longest streak, most replayed lesson, unique stats
+Shareable as animated card
+Generated automatically on user's signup anniversary
+6.3 Offline & Low-Bandwidth Mode
+6.3.1 Offline Capability
+Service Worker caches: lesson content (markdown), exercise descriptions, quiz cards
+User can read lessons and do quizzes offline
+Code exercises: "offline draft" mode — write code locally, sync and submit when online
+Streak protection: offline completion is counted when device reconnects (with timestamp proof)
+6.3.2 Low-Bandwidth Mode
+Detected automatically on slow connections
+Disables: animations, images (replaced with alt text), live collaboration, AI chat
+Enables: text-only mode, compressed content, deferred loading
+Manual toggle available
+6.4 Accessibility
+6.4.1 Standards
+WCAG 2.1 AA compliance (aim for AAA where feasible)
+Full keyboard navigation — every interactive element reachable without mouse
+Screen reader tested: NVDA, JAWS, VoiceOver
+Focus management: modal dialogs trap focus, breadcrumbs show position
+6.4.2 Accessibility Features
+High contrast mode
+Dyslexia-friendly font option (OpenDyslexic)
+Adjustable font size (global, not just editor)
+Reduced motion mode (disables all animations)
+Color-blind safe palette (no red/green only distinctions)
+Alt text on all images and diagrams
+ARIA labels on all interactive elements
+Skip-to-content link on every page
+6.5 Internationalization (i18n)
+6.5.1 Initial Languages
+English (primary)
+Hindi (secondary — since Aman's audience may include Hindi speakers)
+6.5.2 Architecture
+All user-facing strings externalized (no hardcoded text in components)
+RTL support ready (for future Arabic/Urdu)
+Content translation: lessons translated manually (AI translation not trusted for technical content)
+UI translation: can use AI + human review
+User language preference stored in profile, can be changed anytime
+6.6 Certificate System
+6.6.1 Certificate Types
+Certificate
+Earned By
+Path Completion	Finish all modules in a path
+Skill Mastery	Score >90% on all exercises in a skill category
+Project Certificate	Complete a guided project with excellent evaluation
+Streak Legend	Maintain 100+ day streak
+Community Contributor	50+ helpful forum posts
+
+6.6.2 Certificate Features
+Auto-generated PDF with: user name, certificate type, date, unique verification code, QR code
+Verification page: anyone can visit codeforge.dev/verify/ABC123 to confirm authenticity
+LinkedIn share button with pre-formatted post
+Digital badge (Open Badges standard) downloadable for wallet
+Blockchain-anchored option (hash stored on-chain for tamper-proof verification) — stretch goal
+6.7 Admin & Moderation Tools
+6.7.1 Admin Dashboard
+User management: search, filter, role assignment, account suspension/activation
+Content management: all lessons/exercises/paths in one table with status filters
+System health: active containers, queue lengths, error rates, response times
+Financial: API usage costs (Claude API tokens, sandbox usage), projected monthly cost
+A/B test management: create experiments, assign users, view results
+6.7.2 Moderation Tools
+Flagged content queue: forum posts, profile bios, project descriptions flagged by AI or users
+Moderation actions: dismiss, warn user, hide content, suspend user (with reason and duration)
+Mod log: all moderation actions logged with moderator name, timestamp, reason
+Auto-moderation rules: "If post contains <specific spam pattern>, auto-hide and flag"
+6.7.3 Content Flagging by AI
+AI scans forum posts for: spam, harassment, sharing exercise solutions (cheating), off-topic
+Confidence threshold: only flags if >85% confident (minimize false positives)
+Human moderator always makes final decision
+6.8 Performance & Infrastructure
+6.8.1 Performance Budgets
+Metric
+Target
+Page load (first contentful paint)	< 1.5 seconds
+Code execution cold start	< 2 seconds
+Code execution warm start	< 500 milliseconds
+AI chat response (first token)	< 3 seconds
+Leaderboard load	< 1 second
+Search results	< 500 milliseconds
+Dashboard with all widgets	< 2 seconds
+
+6.8.2 Caching Strategy
+Redis: Session data, leaderboard rankings, streak counts, hot lesson content, quiz cards
+CDN: Static assets, images, fonts, certificate templates
+Application-level: Computed path progress (invalidated on exercise completion), skill scores
+Browser: Service Worker cache for offline, HTTP cache headers for static content
+6.8.3 Database Strategy
+PostgreSQL: Primary data store — users, lessons, submissions, progress, forums
+TimescaleDB (PostgreSQL extension): Time-series data — activity logs, performance metrics, API usage
+Redis: Caching layer + real-time leaderboards (sorted sets)
+MinIO: Object storage — avatars, project files, certificate PDFs, dataset files
+Connection pooling (HikariCP) with monitoring
+6.8.4 Search
+Full-text search on: lessons, forum posts, exercises, documentation
+Options: PostgreSQL full-text search (simplest) → Meilisearch (better relevance) → Elasticsearch (overkill for V1)
+Search features: typo tolerance, faceted filters (by path, difficulty, type), "did you mean?" suggestions
+6.9 Security (Non-Auth)
+6.9.1 Application Security
+Input sanitization: All user input sanitized — SQL parameters (never string concatenation), HTML escaping, XSS prevention
+CORS: Strict origin whitelist for API
+CSP: Content Security Policy headers preventing inline script execution
+Rate limiting: Per-endpoint, per-user rate limits (Spring Boot + Bucket4J)
+Request validation: All API inputs validated with Bean Validation (jakarta.validation)
+HTTP headers: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+Dependency scanning: OWASP Dependency-Check in CI/CD pipeline
+Secrets management: Environment variables + vault (HashiCorp Vault or AWS Secrets Manager)
+6.9.2 Sandbox Security (Critical)
+Containers run with non-root user
+seccomp profile blocking: clone, execve, mount, ptrace, keyctl
+No network access (except for specific LLM integration exercises, which use a separate, heavily restricted network namespace)
+No access to host filesystem, no access to other containers
+Resource limits enforced at Docker level (not just application level)
+Container escape monitoring: alert if any container attempts unexpected syscalls
+Execution logs retained for forensic analysis if needed
+6.9.3 AI Security
+Prompt injection detection: user code/comments scanned for prompt injection before sending to AI API
+AI responses filtered: never expose system prompts, never execute AI-suggested code on host
+API key rotation: Claude API key rotated monthly
+Token usage budget: per-user daily token limit (prevent cost runaway)
+AI response caching: identical questions within 24 hours return cached response (saves tokens)
+6.10 Monitoring & Observability
+6.10.1 Application Monitoring
+Metrics: Prometheus + Grafana — request rates, error rates, response times, JVM metrics (heap, GC, threads)
+Logging: Structured JSON logs (Logback) → centralized in Loki or ELK
+Tracing: OpenTelemetry for distributed tracing (especially important when AI service and execution service are separate)
+Alerting: PagerDuty or equivalent for: error rate spike, sandbox crash rate, API cost anomaly, disk space low
+6.10.2 Business Metrics Dashboard
+DAU/MAU (Daily/Monthly Active Users)
+Retention: D1, D7, D30 (what % return after 1/7/30 days)
+Exercise pass rate distribution
+Average time to complete a path
+Streak distribution (how many people have 7+, 30+, 100+ day streaks)
+AI chat satisfaction rate (thumbs up/down on AI responses)
+Drop-off points (which lessons have highest abandonment)
+6.10.3 Error Tracking
+Sentry for frontend + backend error tracking
+Source map support for React (readable stack traces)
+Error grouping and alerting
+"User impact" field: how many users were affected by this error
+6.11 CI/CD Pipeline
+6.11.1 Pipeline Stages
+Lint & Format Check — Spotless (Java) + ESLint + Prettier (React) — fail if non-compliant
+Unit Tests — JUnit (backend) + Jest (frontend) — minimum 80% coverage
+Integration Tests — TestContainers for database-dependent tests
+Security Scan — OWASP Dependency-Check + Trivy container scan
+Build — Docker image build with version tag
+Deploy to Staging — Auto-deploy, run smoke tests
+Manual Approval — Click to promote to production (for V1; auto-deploy later)
+Deploy to Production — Rolling update, zero-downtime
+Post-Deploy Verification — Automated health checks + canary monitoring
+6.11.2 Environments
+Local: Docker Compose (PostgreSQL + Redis + MinIO + app)
+Staging: Mirror of production, used for testing before release
+Production: Live deployment
+6.12 Data Privacy & Compliance
+6.12.1 Data Handling
+User code submissions: private by default, only shared if user explicitly publishes to showcase
+AI chat logs: stored for 30 days (for improving AI quality), then anonymized (prompts kept, user identity stripped)
+Email addresses: never shared, never visible to other users
+Passwords: never stored (only bcrypt hashes)
+Right to deletion: user can request full account deletion — all personal data, submissions, and forum posts deleted within 30 days
+6.12.2 Cookie & Tracking
+Essential cookies only (session, preferences)
+Analytics: self-hosted Plausible or Umami (no Google Analytics — respects privacy)
+No third-party cookies
+Clear cookie consent banner (not the dark-pattern kind)
+7. Complete Build Roadmap (Revised)
+Milestone
+Weeks
+Deliverables
+M1: Auth & Shell	1–2	Passkey + JWT auth, user profiles, basic React shell with routing, PostgreSQL + Redis setup, Docker Compose local dev
+M2: Content Engine	3–4	Admin panel (CRUD lessons/modules/paths), markdown renderer, initial Java Fundamentals content (10 lessons), path dependency graph
+M3: Playground	5–6	Monaco Editor integration, multi-file support, Docker sandbox execution, run code + see output, built-in terminal
+M4: Auto-Grading	7–8	Exercise types (unit test, output match, code repair), test case engine, progressive hints, submission history
+M5: Progress & XP	9–10	Progress dashboard, XP system, levels, streaks, activity graph, skill radar chart
+M6: Gamification	11–12	Badges, achievements, daily challenge, weekly missions, leaderboard, spaced repetition quizzes, sound design
+M7: AI Tutor	13–14	Claude API integration, contextual chat, AI code reviewer, error explanation, tutor modes (Socratic/Direct/Analogy)
+M8: AI Advanced	15–16	AI pair programmer, personalized path generator, auto-generated practice problems, prompt engineering
+M9: AI/ML Content	17–19	Math refresher, Weka module, Smile module, DL4J module, 3 guided projects, ML evaluation visualizer
+M10: LLM Track	20–21	LLM integration lessons, API playground, RAG project, vector DB basics
+M12: Community	22–23	Discussion forums per lesson, project showcase, peer code review, mentorship system
+M13: Polish	24–26	Certificates, notifications hub, offline mode, accessibility audit, i18n, performance optimization, monitoring
+M14: Launch	27–28	Final QA, security audit, load testing, deployment to production, domain setup, announcement
+
+8. Risk Register (Complete)
+Risk
+Probability
+Impact
+Mitigation
+Scope creep	Very High	High	Strict phase gates — do not start Phase N until Phase N-1 is deployed and stable
+Sandbox escape	Low	Critical	Defense in depth: seccomp + gVisor + non-root + no network + resource limits + monitoring
+AI API costs spiral	Medium	High	Per-user daily token limits, aggressive caching, tiered access (AI features unlock at higher levels)
+Content creation burnout	High	High	AI-assisted content generation (AI drafts, human reviews), start with only 1 fully complete path
+Solo dev bottleneck	High	Medium	Modular architecture, everything API-first (could add another dev later), automate everything possible
+Low motivation (self-project)	Medium	High	Public roadmap with weekly updates, share progress on Twitter/LinkedIn for accountability
+Exercise test case quality	Medium	Medium	"Test the tests" workflow: reference solution must pass all tests, AI generates edge cases, community can flag bad tests
+Browser performance	Medium	Medium	Lazy loading, code splitting, virtual scrolling for long lists, monitor Core Web Vitals
+Data loss	Low	Critical	Daily automated PostgreSQL backups, tested restore procedure, off-site backup copy
+
+9. Success Metrics (Complete)
+V1 Launch (Phase 1 Complete)
+ User can sign up with passkey, complete profile
+ User can browse paths, start "Java Fundamentals," complete 10+ lessons
+ User can write and run Java code in browser
+ User can submit exercises, get instant graded feedback
+ User can see progress dashboard with XP, streak, completion %
+ Admin can create/edit/publish lessons without deploying code
+ Deployed on live URL, accessible from mobile
+V2 Launch (Phase 2 Complete)
+ All gamification systems working end-to-end
+ Daily challenge active and rotating
+ Leaderboard updating in real-time
+ Spaced repetition quizzes functional with due card tracking
+ Sound and visual feedback creating "game feel"
+V3 Launch (Phase 3 Complete)
+ At least 3 AI/ML modules fully built with exercises
+ 2+ guided projects completable end-to-end
+ ML model evaluation visualizations rendering correctly
+ LLM integration track with working API playground
+V4 Launch (Phase 4 Complete)
+ AI Tutor responding contextually in <3 seconds
+ AI Code Review providing actionable feedback
+ Personalized path generator producing sensible recommendations
+ Auto-generated practice problems matching user weak areas
+V5 Launch (Phase 5 Complete)
+ Forums active with real discussion
+ Project showcase with at least 5 public projects
+ Peer code review system matching and collecting reviews
+ Certificate generation and verification working
+Ultimate Success (12 months post-launch)
+ Aman has completed every path and can explain every module independently
+ Platform has 50+ registered users (even if mostly friends/colleagues)
+ Aman's portfolio includes this as the #1 project with demo video
+ At least 1 person (other than Aman) has completed a full path
+ CodeForge is mentioned on Aman's LinkedIn as a flagship project
+10. Open Decisions (To Be Resolved Before Starting)
+Decision
+Options
+Recommendation
+Code execution: Docker vs Judge0 API?	Self-hosted Docker (more control, more work) vs Judge0 (managed, costs money)	Start with Docker — it's a learning opportunity itself
+AI provider: Claude vs GPT-4 vs local?	Anthropic Claude (best for code), OpenAI GPT-4 (popular), local LLM (free but weaker)	Claude API — best code understanding, reasonable pricing
+Frontend: React vs Next.js?	React SPA (simpler) vs Next.js (SSR, SEO, more complex)	React SPA — this is not a public SEO-heavy site, it's an app
+Monorepo vs separate repos?	One repo (simpler CI/CD) vs separate repos (cleaner separation)	Monorepo — solo dev, one place to manage
+First path to build completely?	Java Fundamentals (safest) vs something more exciting	Java Fundamentals — it's the foundation everything else depends on
+
+11. Guiding Quote
+"The best way to learn something is to build something that requires it."
+
+CodeForge is not just the thing you're building — it is the thing that requires you to learn everything. Every feature in this document is a lesson disguised as a product feature. By the time you've built all of this, you won't just know Java, Spring Boot, React, AI/ML, Docker, and system design — you'll have proved it.
+
