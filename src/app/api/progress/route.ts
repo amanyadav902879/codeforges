@@ -23,33 +23,26 @@ export async function GET(req: NextRequest) {
 
     // Calculate skill breakdown
     const skillMap: Record<string, { total: number; passed: number; totalScore: number }> = {}
-    const allLessons = await db.lesson.findMany({
-      where: { id: { in: progress.map(p => p.lessonId) } }
-    })
-    const lessonSkillMap: Record<string, string> = {}
-    allLessons.forEach(l => {
-      lessonSkillMap[l.id] = l.skillTags
-    })
-
-    // Get all lessons that have submissions to avoid N+1
     const exerciseIds = submissions.map(s => s.exerciseId)
-    const exercises = await db.exercise.findMany({ where: { id: { in: exerciseIds } } })
-    const exerciseLessonMap: Record<string, string> = {}
-    exercises.forEach(e => { exerciseLessonMap[e.id] = e.lessonId })
-    const lessonIds = [...new Set(exercises.map(e => e.lessonId))]
-    const lessons = await db.lesson.findMany({ where: { id: { in: lessonIds } } })
-    const lessonSkillMap: Record<string, string> = {}
-    lessons.forEach(l => { lessonSkillMap[l.id] = l.skillTags })
+    if (exerciseIds.length > 0) {
+      const exercises = await db.exercise.findMany({ where: { id: { in: exerciseIds } } })
+      const exerciseLessonMap: Record<string, string> = {}
+      exercises.forEach(e => { exerciseLessonMap[e.id] = e.lessonId })
+      const lessonIds = [...new Set(exercises.map(e => e.lessonId))]
+      const lessons = await db.lesson.findMany({ where: { id: { in: lessonIds } } })
+      const lessonSkillMap: Record<string, string> = {}
+      lessons.forEach(l => { lessonSkillMap[l.id] = l.skillTags })
 
-    for (const sub of submissions) {
-      const lessonId = exerciseLessonMap[sub.exerciseId]
-      if (!lessonId) continue
-      const skills = (lessonSkillMap[lessonId] || '').split(',').map(s => s.trim()).filter(Boolean)
-      for (const skill of skills) {
-        if (!skillMap[skill]) skillMap[skill] = { total: 0, passed: 0, totalScore: 0 }
-        skillMap[skill].total++
-        if (sub.passed) skillMap[skill].passed++
-        skillMap[skill].totalScore += sub.score
+      for (const sub of submissions) {
+        const lessonId = exerciseLessonMap[sub.exerciseId]
+        if (!lessonId) continue
+        const skills = (lessonSkillMap[lessonId] || '').split(',').map(s => s.trim()).filter(Boolean)
+        for (const skill of skills) {
+          if (!skillMap[skill]) skillMap[skill] = { total: 0, passed: 0, totalScore: 0 }
+          skillMap[skill].total++
+          if (sub.passed) skillMap[skill].passed++
+          skillMap[skill].totalScore += sub.score
+        }
       }
     }
 
@@ -65,5 +58,4 @@ export async function GET(req: NextRequest) {
     console.error('Progress error:', error)
     return NextResponse.json({ error: 'Failed to fetch progress' }, { status: 500 })
   }
-}
 }

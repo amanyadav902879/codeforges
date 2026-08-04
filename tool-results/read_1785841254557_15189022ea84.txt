@@ -1,0 +1,883 @@
+     1→import { NextResponse } from 'next/server'
+     2→import { db } from '@/lib/db'
+     3→
+     4→export async function POST() {
+     5→  try {
+     6→    // Clear existing data
+     7→    await db.submission.deleteMany()
+     8→    await db.lessonProgress.deleteMany()
+     9→    await db.userBadge.deleteMany()
+    10→    await db.streakLog.deleteMany()
+    11→    await db.dailyChallengeAttempt.deleteMany()
+    12→    await db.submission.deleteMany()
+    13→    await db.exercise.deleteMany()
+    14→    await db.lesson.deleteMany()
+    15→    await db.module.deleteMany()
+    16→    await db.learningPath.deleteMany()
+    17→    await db.userBadge.deleteMany()
+    18→    await db.badge.deleteMany()
+    19→    await db.user.deleteMany()
+    20→
+    21→    // Create Badges
+    22→    const badgeData = [
+    23→      { name: 'First Steps', description: 'Complete your first exercise', icon: '🎯', category: 'GRIND', rarity: 'COMMON', triggerValue: 1 },
+    24→      { name: 'Getting Warmed Up', description: 'Complete 10 exercises', icon: '🔥', category: 'GRIND', rarity: 'COMMON', triggerValue: 10 },
+    25→      { name: 'Code Warrior', description: 'Complete 50 exercises', icon: '⚔️', category: 'GRIND', rarity: 'RARE', triggerValue: 50 },
+    26→      { name: 'Century', description: 'Complete 100 exercises', icon: '💯', category: 'GRIND', rarity: 'EPIC', triggerValue: 100 },
+    27→      { name: 'Kilobyte', description: 'Complete 1000 exercises', icon: '🏗️', category: 'GRIND', rarity: 'LEGENDARY', triggerValue: 1000 },
+    28→      { name: '3-Day Streak', description: 'Maintain a 3-day learning streak', icon: '📅', category: 'STREAK', rarity: 'COMMON', triggerValue: 3 },
+    29→      { name: '7-Day Streak', description: 'Maintain a 7-day learning streak', icon: '💪', category: 'STREAK', rarity: 'RARE', triggerValue: 7 },
+    30→      { name: '30-Day Streak', description: 'Maintain a 30-day learning streak', icon: '⚡', category: 'STREAK', rarity: 'EPIC', triggerValue: 30 },
+    31→      { name: 'Unbreakable', description: 'Maintain a 100-day learning streak', icon: '💎', category: 'STREAK', rarity: 'LEGENDARY', triggerValue: 100 },
+    32→      { name: 'Level 5', description: 'Reach Level 5', icon: '⭐', category: 'LEVEL', rarity: 'COMMON', triggerValue: 5 },
+    33→      { name: 'Level 10', description: 'Reach Level 10', icon: '🌟', category: 'LEVEL', rarity: 'COMMON', triggerValue: 10 },
+    34→      { name: 'Level 25', description: 'Reach Level 25', icon: '💫', category: 'LEVEL', rarity: 'RARE', triggerValue: 25 },
+    35→      { name: 'Level 50', description: 'Reach Level 50', icon: '🏅', category: 'LEVEL', rarity: 'EPIC', triggerValue: 50 },
+    36→      { name: 'CodeForge Master', description: 'Reach Level 100', icon: '👑', category: 'LEVEL', rarity: 'MYTHIC', triggerValue: 100 },
+    37→      { name: 'XP Hunter', description: 'Earn 1000 XP', icon: '✨', category: 'XP', rarity: 'COMMON', triggerValue: 1000 },
+    38→      { name: 'XP Legend', description: 'Earn 10000 XP', icon: '🌈', category: 'XP', rarity: 'EPIC', triggerValue: 10000 },
+    39→      { name: 'Night Owl', description: 'Complete an exercise between midnight and 5 AM', icon: '🦉', category: 'STREAK', rarity: 'RARE', triggerValue: 0 },
+    40→      { name: 'Speed Demon', description: 'Complete an exercise in under 30 seconds', icon: '💨', category: 'GRIND', rarity: 'RARE', triggerValue: 0 },
+    41→    ]
+    42→
+    43→    for (const b of badgeData) {
+    44→      await db.badge.create({ data: b })
+    45→    }
+    46→
+    47→    // Create Learning Paths
+    48→    const javaPath = await db.learningPath.create({
+    49→      data: {
+    50→        title: 'Java Fundamentals',
+    51→        slug: 'java-fundamentals',
+    52→        description: 'Master Java from variables to concurrency. Every concept is taught through real-world scenarios — not toy examples.',
+    53→        icon: '☕',
+    54→        color: '#f97316',
+    55→        targetAudience: 'Beginners + PHP devs',
+    56→        estimatedLessons: 12,
+    57→        order: 1
+    58→      }
+    59→    })
+    60→
+    61→    const springPath = await db.learningPath.create({
+    62→      data: {
+    63→        title: 'Spring Boot Backend',
+    64→        slug: 'spring-boot-backend',
+    65→        description: 'Build production-ready REST APIs with Spring Boot, including security, testing, and deployment.',
+    66→        icon: '🍃',
+    67→        color: '#22c55e',
+    68→        targetAudience: 'Know Java, new to Spring',
+    69→        estimatedLessons: 8,
+    70→        order: 2
+    71→      }
+    72→    })
+    73→
+    74→    const dsaPath = await db.learningPath.create({
+    75→      data: {
+    76→        title: 'DSA in Java',
+    77→        slug: 'dsa-in-java',
+    78→        description: 'Ace your coding interviews with comprehensive data structures and algorithms practice.',
+    79→        icon: '🧮',
+    80→        color: '#a855f7',
+    81→        targetAudience: 'Interview prep',
+    82→        estimatedLessons: 10,
+    83→        order: 3
+    84→      }
+    85→    })
+    86→
+    87→    const aiPath = await db.learningPath.create({
+    88→      data: {
+    89→        title: 'AI/ML with Java',
+    90→        slug: 'ai-ml-java',
+    91→        description: 'Build real ML models using Java — from classical ML with Weka to deep learning with DL4J.',
+    92→        icon: '🤖',
+    93→        color: '#ec4899',
+    94→        targetAudience: 'New to AI/ML',
+    95→        estimatedLessons: 8,
+    96→        order: 4
+    97→      }
+    98→    })
+    99→
+   100→    const llmPath = await db.learningPath.create({
+   101→      data: {
+   102→        title: 'LLM Integration',
+   103→        slug: 'llm-integration',
+   104→        description: 'Integrate LLMs into your Java apps — prompt engineering, RAG systems, vector DBs, and agents.',
+   105→        icon: '🧠',
+   106→        color: '#06b6d4',
+   107→        targetAudience: 'Anyone curious about LLMs',
+   108→        estimatedLessons: 6,
+   109→        order: 5
+   110→      }
+   111→    })
+   112→
+   113→    // ===== JAVA FUNDAMENTALS MODULES & LESSONS =====
+   114→    const m1 = await db.module.create({ data: { title: 'Variables & Data Types', description: 'The building blocks of every Java program', order: 1, pathId: javaPath.id } })
+   115→    const m2 = await db.module.create({ data: { title: 'Control Flow', description: 'Making decisions and repeating actions', order: 2, pathId: javaPath.id } })
+   116→    const m3 = await db.module.create({ data: { title: 'Object-Oriented Programming', description: 'Classes, objects, inheritance, and polymorphism', order: 3, pathId: javaPath.id } })
+   117→    const m4 = await db.module.create({ data: { title: 'Collections Framework', description: 'Lists, sets, maps — the data structures you will use every day', order: 4, pathId: javaPath.id } })
+   118→    const m5 = await db.module.create({ data: { title: 'Exceptions & Error Handling', description: 'Writing robust code that handles the unexpected', order: 5, pathId: javaPath.id } })
+   119→    const m6 = await db.module.create({ data: { title: 'Streams & Lambdas', description: 'Functional-style programming in Java', order: 6, pathId: javaPath.id } })
+   120→
+   121→    // Module 1 Lessons
+   122→    const l1 = await db.lesson.create({
+   123→      data: { title: 'Your First Java Program', slug: 'first-java-program', difficulty: 'STANDARD',
+   124→        contextIntro: "You are joining a new team that builds payment processing software. Before writing any real code, you need to understand how Java programs are structured.",
+   125→        skillTags: 'Basics,Variables', order: 1, moduleId: m1.id,
+   126→        content: `# Your First Java Program
+   127→
+   128→## The Scenario
+   129→Imagine you just joined a fintech startup. Your first task: write a simple program that calculates the total charge for a customer's order. But before tackling that, you need to understand the fundamentals.
+   130→
+   131→## The Structure of a Java Program
+   132→
+   133→Every Java program needs at least one **class** and one **main method**. This is where execution begins.
+   134→
+   135→\`\`\`java
+   136→public class OrderProcessor {
+   137→    public static void main(String[] args) {
+   138→        System.out.println("Order processing started...");
+   139→    }
+   140→}
+   141→\`\`\`
+   142→
+   143→### Key Concepts
+   144→
+   145→- **\`public class\`** — A class is a blueprint. Every Java file needs one.
+   146→- **\`public static void main(String[] args)\`** — The entry point. The JVM calls this method first.
+   147→- **\`System.out.println()\`** — Prints output to the console.
+   148→
+   149→### Variables — Storing Data
+   150→
+   151→In Java, every variable has a **type**. This is different from languages like PHP or JavaScript where types are loose.
+   152→
+   153→\`\`\`java
+   154→int orderCount = 5;           // Whole numbers
+   155→double pricePerItem = 29.99; // Decimal numbers
+   156→String customerName = "Aman"; // Text
+   157→boolean isPremium = true;     // True/false
+   158→char grade = 'A';            // Single character
+   159→\`\`\`
+   160→
+   161→### Why Types Matter
+   162→
+   163→You are building a payment system. A type mismatch — adding a String to an int — would crash the system at runtime. Java's type system catches these errors **at compile time**, before your code ever reaches production.
+   164→
+   165→This is why companies like Netflix, LinkedIn, and Amazon choose Java for mission-critical systems.
+   166→` }
+   167→    })
+   168→
+   169→    await db.exercise.create({
+   170→      data: {
+   171→        title: 'Create a Simple Order Summary', type: 'UNIT_TEST',
+   172→        description: 'Create a class \`OrderSummary\` with a main method that declares variables for an order: \`itemCount\` (int, value 3), \`pricePerItem\` (double, value 19.99), and \`customerName\` (String, "Aman"). Calculate \`totalPrice\` by multiplying itemCount by pricePerItem, then print: "Customer: [name], Items: [count], Total: $[total]".',
+   173→        starterCode: 'public class OrderSummary {\n    public static void main(String[] args) {\n        // Declare your variables here\n        \n        \n        \n        // Calculate total and print\n        \n    }\n}',
+   174→        referenceSolution: 'public class OrderSummary {\n    public static void main(String[] args) {\n        int itemCount = 3;\n        double pricePerItem = 19.99;\n        String customerName = "Aman";\n        double totalPrice = itemCount * pricePerItem;\n        System.out.println("Customer: " + customerName + ", Items: " + itemCount + ", Total: $" + totalPrice);\n    }\n}',
+   175→        testCode: 'Test OrderSummary with itemCount=3, pricePerItem=19.99',
+   176→        hints: '["You need to declare three variables: int, double, and String", "Multiply itemCount by pricePerItem to get totalPrice", "Use System.out.println with string concatenation using +"]',
+   177→        difficulty: 'STANDARD', xpReward: 50, lessonId: l1.id
+   178→      }
+   179→    })
+   180→
+   181→    const l2 = await db.lesson.create({
+   182→      data: { title: 'Primitive vs Reference Types', slug: 'primitive-vs-reference', difficulty: 'STANDARD',
+   183→        contextIntro: 'Your payment system needs to handle different types of data — amounts, names, statuses. Understanding how Java stores data in memory is critical for writing efficient code.',
+   184→        skillTags: 'Basics,Types', order: 2, moduleId: m1.id,
+   185→        content: `# Primitive vs Reference Types
+   186→
+   187→## The Scenario
+   188→Your team lead asks: "Why do we use \`BigDecimal\` for currency instead of \`double\`?" If you cannot answer this, you are not ready to write financial software.
+   189→
+   190→## Primitive Types (Value Types)
+   191→
+   192→Primitives store the **actual value** directly in memory. They are fast and lightweight.
+   193→
+   194→| Type | Size | Range | Example Use |
+   195→|------|------|-------|-------------|
+   196→| \`byte\` | 1 byte | -128 to 127 | File I/O buffers |
+   197→| \`short\` | 2 bytes | -32K to 32K | Small counters |
+   198→| \`int\` | 4 bytes | ~2 billion | General purpose |
+   199→| \`long\` | 8 bytes | ~9 quintillion | Timestamps |
+   200→| \`float\` | 4 bytes | 7 decimal digits | Graphics |
+   201→| \`double\` | 8 bytes | 15 decimal digits | Calculations |
+   202→| \`boolean\` | 1 bit | true/false | Flags |
+   203→| \`char\` | 2 bytes | Unicode char | Characters |
+   204→
+   205→## Reference Types
+   206→
+   207→Reference types store a **pointer** to the actual data in memory (the heap).
+   208→
+   209→\`\`\`java
+   210→// String is a reference type
+   211→String name = new String("Aman");  // Full form
+   212→String name2 = "Aman";            // Shortcut (interned)
+   213→
+   214→// Arrays are reference types
+   215→int[] orders = new int[10];
+   216→orders[0] = 42;
+   217→\`\`\`
+   218→
+   219→## The \`double\` Trap
+   220→
+   221→\`\`\`java
+   222→System.out.println(0.1 + 0.2);  // Prints: 0.30000000000000004
+   223→\`\`\`
+   224→
+   225→This is why financial software uses \`BigDecimal\`:
+   226→
+   227→\`\`\`java
+   228→import java.math.BigDecimal;
+   229→
+   230→BigDecimal price = new BigDecimal("19.99");
+   231→BigDecimal tax = new BigDecimal("0.08");
+   232→BigDecimal total = price.multiply(price.add(tax));  // Precise!
+   233→\`\`\`
+   234→
+   235→### Key Takeaway
+   236→Primitives for performance, \`BigDecimal\`/\`String\` for precision and text.
+   237→` }
+   238→    })
+   239→
+   240→    await db.exercise.create({
+   241→      data: {
+   242→        title: 'Fix the Floating Point Bug', type: 'CODE_REPAIR',
+   243→        description: 'The following code has a bug: \`double total = 0.1 + 0.2;\` and then prints \`"Total: " + total\`. The output shows \`0.30000000000000004\` instead of \`0.3\`. Fix this by using \`BigDecimal\` to compute the sum precisely, then print the result.',
+   244→        starterCode: 'import java.math.BigDecimal;\n\npublic class PrecisionFix {\n    public static void main(String[] args) {\n        // BUG: This gives 0.30000000000000004\n        double total = 0.1 + 0.2;\n        System.out.println("Total: " + total);\n        \n        // YOUR FIX: Use BigDecimal here\n        \n    }\n}',
+   245→        referenceSolution: 'import java.math.BigDecimal;\n\npublic class PrecisionFix {\n    public static void main(String[] args) {\n        BigDecimal a = new BigDecimal("0.1");\n        BigDecimal b = new BigDecimal("0.2");\n        BigDecimal total = a.add(b);\n        System.out.println("Total: " + total);\n    }\n}',
+   246→        testCode: 'Verify BigDecimal produces exact 0.3',
+   247→        hints: '["Create BigDecimal objects using new BigDecimal(\"0.1\") — note: use String constructor", "Use .add() method to sum two BigDecimal values"]',
+   248→        difficulty: 'STANDARD', xpReward: 50, lessonId: l2.id
+   249→      }
+   250→    })
+   251→
+   252→    // Module 2: Control Flow
+   253→    const l3 = await db.lesson.create({
+   254→      data: { title: 'If-Else & Switch', slug: 'if-else-switch', difficulty: 'STANDARD',
+   255→        contextIntro: "Your e-commerce platform needs to apply different discount rules based on customer tier: BRONZE gets 5%, SILVER gets 10%, GOLD gets 15%, PLATINUM gets 20%. Time to learn control flow.",
+   256→        skillTags: 'Control Flow,Conditionals', order: 1, moduleId: m2.id,
+   257→        content: `# If-Else & Switch Expressions
+   258→
+   259→## The Scenario
+   260→Your company's pricing engine needs to apply tiered discounts. A \`switch\` expression (Java 14+) is perfect for this.
+   261→
+   262→## If-Else
+   263→\`\`\`java
+   264→int orderTotal = 500;
+   265→
+   266→if (orderTotal >= 1000) {
+   267→    System.out.println("Free shipping!");
+   268→} else if (orderTotal >= 500) {
+   269→    System.out.println("Discounted shipping: $5");
+   270→} else {
+   271→    System.out.println("Standard shipping: $10");
+   272→}
+   273→\`\`\`
+   274→
+   275→## Switch Expression (Java 14+)
+   276→\`\`\`java
+   277→String tier = "GOLD";
+   278→
+   279→// Modern switch expression with arrow syntax
+   280→double discount = switch (tier) {
+   281→    case "BRONZE"  -> 0.05;
+   282→    case "SILVER"  -> 0.10;
+   283→    case "GOLD"    -> 0.15;
+   284→    case "PLATINUM" -> 0.20;
+   285→    default        -> 0.0;
+   286→};
+   287→
+   288→System.out.println("Discount: " + (discount * 100) + "%");
+   289→\`\`\`
+   290→
+   291→### Pattern Matching (Java 21)
+   292→\`\`\`java
+   293→Object value = 42;
+   294→
+   295→String result = switch (value) {
+   296→    case Integer i when i > 0 -> "Positive integer: " + i;
+   297→    case Integer i -> "Non-positive integer: " + i;
+   298→    case String s -> "String: " + s;
+   299→    case null     -> "null value";
+   300→    default       -> "Unknown type";
+   301→};
+   302→\`\`\`
+   303→`
+   304→      }
+   305→    })
+   306→
+   307→    await db.exercise.create({
+   308→      data: {
+   309→        title: 'Build a Discount Calculator', type: 'UNIT_TEST',
+   310→        description: 'Create a method \`public static double calculateDiscount(String tier, double orderTotal)\` that returns the discounted total. BRONZE: 5%, SILVER: 10%, GOLD: 15%, PLATINUM: 20%. Use a switch expression. If tier is null or unknown, return the orderTotal unchanged.',
+   311→        starterCode: 'public class DiscountCalculator {\n    public static double calculateDiscount(String tier, double orderTotal) {\n        // Implement using switch expression\n        return orderTotal;\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(calculateDiscount("GOLD", 1000)); // Should print 850.0\n    }\n}',
+   312→        referenceSolution: 'public class DiscountCalculator {\n    public static double calculateDiscount(String tier, double orderTotal) {\n        if (tier == null) return orderTotal;\n        double discountRate = switch (tier) {\n            case "BRONZE" -> 0.05;\n            case "SILVER" -> 0.10;\n            case "GOLD" -> 0.15;\n            case "PLATINUM" -> 0.20;\n            default -> 0.0;\n        };\n        return orderTotal * (1 - discountRate);\n    }\n    public static void main(String[] args) {\n        System.out.println(calculateDiscount("GOLD", 1000));\n    }\n}',
+   313→        testCode: 'Test calculateDiscount with all tiers and null',
+   314→        hints: '["Use switch expression with arrow syntax (->)", "Return orderTotal * (1 - discountRate)", "Handle null tier with an if check before the switch"]',
+   315→        difficulty: 'STANDARD', xpReward: 50, lessonId: l3.id
+   316→      }
+   317→    })
+   318→
+   319→    const l4 = await db.lesson.create({
+   320→      data: { title: 'Loops: For, While, Enhanced For', slug: 'loops', difficulty: 'STANDARD',
+   321→        contextIntro: 'You need to process a batch of 10,000 orders from a database. A loop lets you iterate through each record, validate it, and calculate totals.',
+   322→        skillTags: 'Control Flow,Loops', order: 2, moduleId: m2.id,
+   323→        content: `# Loops in Java
+   324→
+   325→## The Scenario
+   326→Your payment gateway receives a list of transactions. You need to process each one, validate it, and calculate the total. Loops make this possible.
+   327→
+   328→## For Loop
+   329→\`\`\`java
+   330→int[] transactions = {150, 200, 75, 300, 50};
+   331→int total = 0;
+   332→
+   333→for (int i = 0; i < transactions.length; i++) {
+   334→    if (transactions[i] > 0) {
+   335→        total += transactions[i];
+   336→    }
+   337→}
+   338→\`\`\`
+   339→
+   340→## Enhanced For Loop (For-Each)
+   341→\`\`\`java
+   342→for (int amount : transactions) {
+   343→    System.out.println("Processing: $" + amount);
+   344→}
+   345→\`\`\`
+   346→
+   347→## While Loop
+   348→\`\`\`java
+   349→int retries = 0;
+   350→while (retries < 3) {
+   351→    boolean success = attemptConnection();
+   352→    if (success) break;
+   353→    retries++;
+   354→}
+   355→\`\`\`
+   356→
+   357→## Streams vs Loops
+   358→\`\`\`java
+   359→// Traditional loop
+   360→int count = 0;
+   361→for (int t : transactions) {
+   362→    if (t > 100) count++;
+   363→}
+   364→
+   365→// Stream (we will cover this in detail later)
+   366→long streamCount = Arrays.stream(transactions).filter(t -> t > 100).count();
+   367→\`\`\`
+   368→`
+   369→      }
+   370→    })
+   371→
+   372→    await db.exercise.create({
+   373→      data: {
+   374→        title: 'Process Transaction Batch', type: 'UNIT_TEST',
+   375→        description: 'Write a method \`public static int processTransactions(int[] amounts)\` that returns the sum of all positive amounts. If the array is null, return 0. If any amount is negative, skip it (it is a refund, handled separately).',
+   376→        starterCode: 'public class TransactionProcessor {\n    public static int processTransactions(int[] amounts) {\n        // Sum all positive amounts\n        return 0;\n    }\n    \n    public static void main(String[] args) {\n        int[] txns = {100, -50, 200, 75, -25, 300};\n        System.out.println(processTransactions(txns)); // Should print 675\n    }\n}',
+   377→        referenceSolution: 'public class TransactionProcessor {\n    public static int processTransactions(int[] amounts) {\n        if (amounts == null) return 0;\n        int total = 0;\n        for (int amount : amounts) {\n            if (amount > 0) {\n                total += amount;\n            }\n        }\n        return total;\n    }\n    public static void main(String[] args) {\n        int[] txns = {100, -50, 200, 75, -25, 300};\n        System.out.println(processTransactions(txns));\n    }\n}',
+   378→        testCode: 'Test with positive, negative, null, and empty arrays',
+   379→        hints: '["Check for null first — return 0 if null", "Use enhanced for loop to iterate", "Only add to total if amount > 0"]',
+   380→        difficulty: 'STANDARD', xpReward: 50, lessonId: l4.id
+   381→      }
+   382→    })
+   383→
+   384→    // Module 3: OOP
+   385→    const l5 = await db.lesson.create({
+   386→      data: { title: 'Classes & Objects', slug: 'classes-objects', difficulty: 'STANDARD',
+   387→        contextIntro: 'You are building a user management system. Each user has a name, email, and role. Classes let you model these real-world entities with both data and behavior.',
+   388→        skillTags: 'OOP,Classes,Objects', order: 1, moduleId: m3.id,
+   389→        content: `# Classes & Objects
+   390→
+   391→## The Scenario
+   392→Your startup needs a User class for its authentication system. Users have properties (name, email, role) and behaviors (login, logout, hasPermission).
+   393→
+   394→## Defining a Class
+   395→\`\`\`java
+   396→public class User {
+   397→    // Fields (instance variables)
+   398→    private String name;
+   399→    private String email;
+   400→    private String role;
+   401→    private boolean isActive;
+   402→
+   403→    // Constructor
+   404→    public User(String name, String email, String role) {
+   405→        this.name = name;
+   406→        this.email = email;
+   407→        this.role = role;
+   408→        this.isActive = true;
+   409→    }
+   410→
+   411→    // Methods (behaviors)
+   412→    public boolean hasPermission(String permission) {
+   413→        if ("ADMIN".equals(role)) return true;
+   414→        return false;
+   415→    }
+   416→
+   417→    // Getters
+   418→    public String getName() { return name; }
+   419→    public String getRole() { return role; }
+   420→}
+   421→\`\`\`
+   422→
+   423→## Encapsulation
+   424→Notice the fields are \`private\`. This is **encapsulation** — the class controls access to its own data. External code must go through methods (getters/setters).
+   425→
+   426→## Java Records (Java 16+)
+   427→For simple data carriers:
+   428→\`\`\`java
+   429→public record User(String name, String email, String role) {
+   430→    // Constructor, equals, hashCode, toString auto-generated!
+   431→}
+   432→\`\`\`
+   433→`
+   434→      }
+   435→    })
+   436→
+   437→    await db.exercise.create({
+   438→      data: {
+   439→        title: 'Create a BankAccount Class', type: 'UNIT_TEST',
+   440→        description: 'Create a \`BankAccount\` class with: private fields \`balance\` (double) and \`accountNumber\` (String). Constructor takes both. Methods: \`deposit(double amount)\` adds to balance, \`withdraw(double amount)\` subtracts if sufficient funds (return true) or does nothing (return false), \`getBalance()\` returns balance. Do not allow negative deposits.',
+   441→        starterCode: 'public class BankAccount {\n    // Add your fields here\n    \n    public BankAccount(String accountNumber, double initialBalance) {\n        // Initialize fields\n    }\n    \n    public boolean deposit(double amount) {\n        // Implement deposit\n        return false;\n    }\n    \n    public boolean withdraw(double amount) {\n        // Implement withdraw\n        return false;\n    }\n    \n    public double getBalance() {\n        return 0; }\n}',
+   442→        referenceSolution: 'public class BankAccount {\n    private double balance;\n    private String accountNumber;\n    public BankAccount(String accountNumber, double initialBalance) {\n        this.accountNumber = accountNumber;\n        if (initialBalance > 0) this.balance = initialBalance;\n    }\n    public boolean deposit(double amount) {\n        if (amount <= 0) return false;\n        balance += amount;\n        return true;\n    }\n    public boolean withdraw(double amount) {\n        if (amount <= 0 || amount > balance) return false;\n        balance -= amount;\n        return true;\n    }\n    public double getBalance() { return balance; }\n}',
+   443→        testCode: 'Test deposit, withdraw, insufficient funds, negative deposit',
+   444→        hints: '["Make balance and accountNumber private", "deposit should return false for negative amounts", "withdraw should check if amount > balance first"]',
+   445→        difficulty: 'STANDARD', xpReward: 50, lessonId: l5.id
+   446→      }
+   447→    })
+   448→
+   449→    const l6 = await db.lesson.create({
+   450→      data: { title: 'Inheritance & Polymorphism', slug: 'inheritance-polymorphism', difficulty: 'STANDARD',
+   451→        contextIntro: 'Your system has different types of payments: CreditCard, UPI, NetBanking. They all share common logic (process payment) but differ in implementation. Inheritance models this "is-a" relationship.',
+   452→        skillTags: 'OOP,Inheritance,Polymorphism', order: 2, moduleId: m3.id,
+   453→        content: `# Inheritance & Polymorphism
+   454→
+   455→## The Scenario
+   456→Your payment system supports multiple payment methods. They all share common behavior (process, refund) but each works differently. Inheritance lets you share code while allowing customization.
+   457→
+   458→## Inheritance
+   459→\`\`\`java
+   460→public abstract class PaymentMethod {
+   461→    protected double amount;
+   462→    protected String transactionId;
+   463→
+   464→    public PaymentMethod(double amount) {
+   465→        this.amount = amount;
+   466→        this.transactionId = generateTxnId();
+   467→    }
+   468→
+   469→    // Abstract method — subclasses MUST implement
+   470→    public abstract boolean process();
+   471→
+   472→    // Common method — shared by all subclasses
+   473→    public boolean refund() {
+   474→        System.out.println("Refunding: $" + amount);
+   475→        return true;
+   476→    }
+   477→
+   478→    private String generateTxnId() {
+   479→        return "TXN-" + System.currentTimeMillis();
+   480→    }
+   481→}
+   482→\`\`\`
+   483→
+   484→## Polymorphism
+   485→\`\`\`java
+   486→PaymentMethod credit = new CreditCardPayment(100.0);
+   487→PaymentMethod upi = new UpiPayment(50.0);
+   488→
+   489→// Same method call, different behavior!
+   490→credit.process();  // CreditCard-specific logic
+   491→upi.process();    // UPI-specific logic
+   492→\`\`\`
+   493→`
+   494→      }
+   495→    })
+   496→
+   497→    await db.exercise.create({
+   498→      data: {
+   499→        title: 'Build a Payment Hierarchy', type: 'UNIT_TEST',
+   500→        description: 'Create an abstract class \`PaymentMethod\` with a constructor taking \`double amount\`, an abstract method \`public abstract boolean process()\`, and a concrete method \`public double getAmount()\`. Then create two subclasses: \`CreditCardPayment\` (process returns true and prints "Processing credit card: $amount") and \`UpiPayment\` (process returns true and prints "Processing UPI: $amount").',
+   501→        starterCode: '// Create your classes here\n\npublic class PaymentDemo {\n    public static void main(String[] args) {\n        // This should work:
+   502→        PaymentMethod cc = new CreditCardPayment(100.0);
+   503→        PaymentMethod upi = new UpiPayment(50.0);\n        cc.process();
+   504→        upi.process();\n    }\n}',
+   505→        referenceSolution: 'public abstract class PaymentMethod {\n    protected double amount;\n    public PaymentMethod(double amount) { this.amount = amount; }\n    public abstract boolean process();\n    public double getAmount() { return amount; }\n}\npublic class CreditCardPayment extends PaymentMethod {\n    public CreditCardPayment(double amount) { super(amount); }\n    public boolean process() { System.out.println("Processing credit card: $" + amount); return true; }\n}\npublic class UpiPayment extends PaymentMethod {\n    public UpiPayment(double amount) { super(amount); }\n    public boolean process() { System.out.println("Processing UPI: $" + amount); return true; }\n}',
+   506→        testCode: 'Test polymorphic calls to process()',
+   507→        hints: '["Use the abstract keyword for the class and the process method", "Subclasses use extends PaymentMethod", "Call super(amount) in subclass constructors"]',
+   508→        difficulty: 'STANDARD', xpReward: 50, lessonId: l6.id
+   509→      }
+   510→    })
+   511→
+   512→    // Module 4: Collections
+   513→    const l7 = await db.lesson.create({
+   514→      data: { title: 'ArrayList & LinkedList', slug: 'arraylist-linkedlist', difficulty: 'STANDARD',
+   515→        contextIntro: 'You are building a session store for 10 million users. You need O(1) lookups. Understanding which collection to use and when is critical for system performance.',
+   516→        skillTags: 'Collections,List,ArrayList', order: 1, moduleId: m4.id,
+   517→        content: `# ArrayList & LinkedList
+   518→
+   519→## The Scenario
+   520→You are building a notification system that stores unread notifications for each user. ArrayList is perfect — fast random access when users click on notification #5.
+   521→
+   522→## ArrayList
+   523→\`\`\`java
+   524→import java.util.ArrayList;
+   525→import java.util.List;
+   526→
+   527→List<String> notifications = new ArrayList<>();
+   528→notifications.add("New order received");
+   529→notifications.add("Payment confirmed");
+   530→notifications.add("Order shipped");
+   531→
+   532→// Random access: O(1)
+   533→String first = notifications.get(0);
+   534→
+   535→// Size
+   536→int count = notifications.size();
+   537→
+   538→// Contains check
+   539→boolean hasNew = notifications.contains("New order received");
+   540→\`\`\`
+   541→
+   542→## When to Use What
+   543→
+   544→| Operation | ArrayList | LinkedList |
+   545→|-----------|-----------|------------|
+   546→| Get by index | O(1) | O(n) |
+   547→| Add at end | O(1) amortized | O(1) |
+   548→| Add at beginning | O(n) | O(1) |
+   549→| Remove from beginning | O(n) | O(1) |
+   550→| Memory | Compact | More (node pointers) |
+   551→
+   552→**Rule of thumb**: Use \`ArrayList\` by default. Only switch to \`LinkedList\` if you do frequent insertions/deletions at the beginning.
+   553→`
+   554→      }
+   555→    })
+   556→
+   557→    await db.exercise.create({
+   558→      data: {
+   559→        title: 'Build a Task Manager', type: 'UNIT_TEST',
+   560→        description: 'Create a \`TaskManager\` class with a \`List<String>\` field. Implement: \`addTask(String task)\`, \`removeTask(int index)\` (return the removed task or null if invalid index), \`getTasks()\` returns the list, \`findTask(String keyword)\` returns the first task containing the keyword or null. Use ArrayList.',
+   561→        starterCode: 'import java.util.ArrayList;\nimport java.util.List;\n\npublic class TaskManager {\n    // Add your list field here\n    \n    public TaskManager() {\n        // Initialize the list\n    }\n    \n    public void addTask(String task) {\n    }\n    \n    public String removeTask(int index) {\n        return null;\n    }\n    \n    public List<String> getTasks() {\n        return null; }\n    \n    public String findTask(String keyword) {\n        return null; }\n}',
+   562→        referenceSolution: 'import java.util.ArrayList;\nimport java.util.List;\npublic class TaskManager {\n    private List<String> tasks = new ArrayList<>();\n    public void addTask(String task) { tasks.add(task); }\n    public String removeTask(int index) {\n        if (index < 0 || index >= tasks.size()) return null;\n        return tasks.remove(index);\n    }\n    public List<String> getTasks() { return tasks; }\n    public String findTask(String keyword) {\n        for (String task : tasks) {\n            if (task.contains(keyword)) return task;\n        }\n        return null;\n    }\n}',
+   563→        testCode: 'Test add, remove, find, and edge cases',
+   564→        hints: '["Initialize tasks as new ArrayList<>() in constructor", "removeTask should check index bounds", "findTask uses .contains() on each string"]',
+   565→        difficulty: 'STANDARD', xpReward: 50, lessonId: l7.id
+   566→      }
+   567→    })
+   568→
+   569→    const l8 = await db.lesson.create({
+   570→      data: { title: 'HashMap — The Most Used Collection', slug: 'hashmap', difficulty: 'STANDARD',
+   571→        contextIntro: 'You are building a session store for 10 million users and need O(1) lookups by session ID. HashMap is the answer — it is probably the most used data structure in production Java code.',
+   572→        skillTags: 'Collections,Map,HashMap', order: 2, moduleId: m4.id,
+   573→        content: `# HashMap
+   574→
+   575→## The Scenario
+   576→Your API gateway needs to look up user sessions millions of times per second. \`HashMap\` gives you O(1) average lookup time — constant time regardless of how many entries exist.
+   577→
+   578→## Basic Operations
+   579→\`\`\`java
+   580→import java.util.HashMap;
+   581→import java.util.Map;
+   582→
+   583→Map<String, String> sessions = new HashMap<>();
+   584→sessions.put("sess_abc123", "user_456");
+   585→sessions.put("sess_def456", "user_789");
+   586→
+   587→// Lookup: O(1) average
+   588→String userId = sessions.get("sess_abc123");
+   589→
+   590→// Check existence
+   591→boolean exists = sessions.containsKey("sess_abc123");
+   592→
+   593→// Safe get with default
+   594→String value = sessions.getOrDefault("nonexistent", "default");
+   595→
+   596→// Iterate
+   597→for (Map.Entry<String, String> entry : sessions.entrySet()) {
+   598→    System.out.println(entry.getKey() + " -> " + entry.getValue());
+   599→}
+   600→\`\`\`
+   601→
+   602→## How HashMap Works Internally
+   603→1. Calls \`hashCode()\` on the key
+   604→2. Applies a hash function to find the bucket index
+   605→3. If collision (same bucket), uses \`equals()\` to find exact match
+   606→4. Java 8+: bucket becomes a tree (not linked list) if too many collisions
+   607→
+   608→### Always Override Both!
+   609→If you use custom objects as keys, you MUST override both \`hashCode()\` and \`equals()\`.
+   610→`
+   611→      }
+   612→    })
+   613→
+   614→    await db.exercise.create({
+   615→      data: {
+   616→        title: 'Build a Word Frequency Counter', type: 'UNIT_TEST',
+   617→        description: 'Write a method \`public static Map<String, Integer> countWords(String text)\` that returns a HashMap counting word frequencies. Split by spaces, convert to lowercase, and ignore empty strings. For example, "hello world hello" should return {hello: 2, world: 1}.',
+   618→        starterCode: 'import java.util.HashMap;\nimport java.util.Map;\n\npublic class WordCounter {\n    public static Map<String, Integer> countWords(String text) {\n        Map<String, Integer> counts = new HashMap<>();\n        // Implement word counting\n        return counts;\n    }\n    \n    public static void main(String[] args) {\n        Map<String, Integer> result = countWords("the cat sat on the mat the cat");\n        System.out.println(result);\n    }\n}',
+   619→        referenceSolution: 'import java.util.HashMap;\nimport java.util.Map;\npublic class WordCounter {\n    public static Map<String, Integer> countWords(String text) {\n        Map<String, Integer> counts = new HashMap<>();\n        if (text == null || text.isEmpty()) return counts;\n        String[] words = text.toLowerCase().split("\\\\s+");\n        for (String word : words) {\n            if (word.isEmpty()) continue;\n            counts.put(word, counts.getOrDefault(word, 0) + 1);\n        }\n        return counts;\n    }\n    public static void main(String[] args) {\n        System.out.println(countWords("the cat sat on the mat the cat"));\n    }\n}',
+   620→        testCode: 'Test with various strings, null, empty',
+   621→        hints: '["Split text using .split(\"\\\\s+\") for any whitespace", "Use getOrDefault to increment counts safely", "Handle null and empty input at the start"]',
+   622→        difficulty: 'STANDARD', xpReward: 50, lessonId: l8.id
+   623→      }
+   624→    })
+   625→
+   626→    // Module 5: Exceptions
+   627→    const l9 = await db.lesson.create({
+   628→      data: { title: 'Try-Catch-Finally & Custom Exceptions', slug: 'exceptions', difficulty: 'STANDARD',
+   629→        contextIntro: "Your API calls an external payment service. Sometimes it is down, sometimes it times out. Your code must handle these failures gracefully — not crash the entire application.",
+   630→        skillTags: 'Exceptions,Error Handling', order: 1, moduleId: m5.id,
+   631→        content: `# Exception Handling
+   632→
+   633→## The Scenario
+   634→Your microservice calls an external payment API. It might throw \`IOException\` (network down), \`TimeoutException\` (slow response), or return invalid data. Exception handling prevents one bad request from crashing everything.
+   635→
+   636→## Try-Catch-Finally
+   637→\`\`\`java
+   638→public String processPayment(String orderId) {
+   639→    try {
+   640→        PaymentResult result = paymentGateway.charge(orderId);
+   641→        return result.getTransactionId();
+   642→    } catch (NetworkException e) {
+   643→        logger.error("Network error for order: " + orderId, e);
+   644→        throw new PaymentRetryException("Retry later", e);
+   645→    } catch (InvalidOrderException e) {
+   646→        logger.warn("Invalid order: " + orderId);
+   647→        return null;
+   648→    } finally {
+   649→        // Always runs — even if exception thrown
+   650→        metrics.recordAttempt();
+   651→    }
+   652→}
+   653→\`\`\`
+   654→
+   655→## Custom Exceptions
+   656→\`\`\`java
+   657→public class InsufficientFundsException extends RuntimeException {
+   658→    private final double balance;
+   659→    private final double attempted;
+   660→
+   661→    public InsufficientFundsException(double balance, double attempted) {
+   662→        super(String.format(
+   663→            "Insufficient funds. Balance: $%.2f, Attempted: $%.2f",
+   664→            balance, attempted));
+   665→        this.balance = balance;
+   666→        this.attempted = attempted;
+   667→    }
+   668→}
+   669→\`\`\`
+   670→`
+   671→      }
+   672→    })
+   673→
+   674→    await db.exercise.create({
+   675→      data: {
+   676→        title: 'Build a Safe File Reader', type: 'UNIT_TEST',
+   677→        description: 'Create a method \`public static String safeRead(String filename)\` that throws \`IllegalArgumentException\` if filename is null or empty. Use try-catch to simulate reading. If filename ends with ".txt", return "Content of " + filename. If it ends with ".csv", return "CSV data from " + filename. For any other extension, throw an \`UnsupportedOperationException\`.',
+   678→        starterCode: 'public class SafeReader {\n    public static String safeRead(String filename) {\n        // Implement safe file reading logic\n        return null;\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(safeRead("data.txt"));\n    }\n}',
+   679→        referenceSolution: 'public class SafeReader {\n    public static String safeRead(String filename) {\n        if (filename == null || filename.isEmpty()) {\n            throw new IllegalArgumentException("Filename cannot be null or empty");\n        }\n        if (filename.endsWith(".txt")) return "Content of " + filename;\n        if (filename.endsWith(".csv")) return "CSV data from " + filename;\n        throw new UnsupportedOperationException("Unsupported file type: " + filename);\n    }\n    public static void main(String[] args) {\n        System.out.println(safeRead("data.txt"));\n    }\n}',
+   680→        testCode: 'Test with .txt, .csv, null, empty, and .pdf',
+   681→        hints: '["First validate filename is not null or empty", "Use .endsWith() to check file extension", "Throw IllegalArgumentException for bad input, UnsupportedOperationException for wrong type"]',
+   682→        difficulty: 'STANDARD', xpReward: 50, lessonId: l9.id
+   683→      }
+   684→    })
+   685→
+   686→    // Module 6: Streams
+   687→    const l10 = await db.lesson.create({
+   688→      data: { title: 'Stream API: Filter, Map, Reduce', slug: 'streams', difficulty: 'STANDARD',
+   689→        contextIntro: 'Your analytics dashboard needs to find all orders above $100, apply tax, and calculate the total. Instead of writing 3 loops, the Stream API chains these operations into a single pipeline.',
+   690→        skillTags: 'Streams,Lambdas,Functional', order: 1, moduleId: m6.id,
+   691→        content: `# Stream API
+   692→
+   693→## The Scenario
+   694→Your data pipeline needs to: filter orders by status, transform them, and aggregate results. The Stream API replaces verbose loops with declarative, readable pipelines.
+   695→
+   696→## Basic Pipeline
+   697→\`\`\`java
+   698→import java.util.List;
+   699→import java.util.stream.Collectors;
+   700→
+   701→List<Order> orders = getOrders();
+   702→
+   703→List<String> processed = orders.stream()
+   704→    .filter(o -> o.getStatus() == Status.COMPLETED)  // Keep only completed
+   705→    .map(o -> o.getCustomerName())                     // Transform to names
+   706→    .distinct()                                        // Remove duplicates
+   707→    .sorted()                                          // Sort alphabetically
+   708→    .collect(Collectors.toList());                     // Collect to list
+   709→\`\`\`
+   710→
+   711→## Reduction
+   712→\`\`\`java
+   713→double total = orders.stream()
+   714→    .filter(o -> o.getAmount() > 100)
+   715→    .mapToDouble(Order::getAmount)
+   716→    .sum();
+   717→\`\`\`
+   718→
+   719→## Collectors
+   720→\`\`\`java
+   721→// Group by category
+   722→Map<String, List<Order>> byCategory = orders.stream()
+   723→    .collect(Collectors.groupingBy(Order::getCategory));
+   724→
+   725→// Partition into two groups
+   726→Map<Boolean, List<Order>> partitioned = orders.stream()
+   727→    .collect(Collectors.partitioningBy(o -> o.getAmount() > 100));
+   728→\`\`\`
+   729→`
+   730→      }
+   731→    })
+   732→
+   733→    await db.exercise.create({
+   734→      data: {
+   735→        title: 'Analyze Order Data with Streams', type: 'UNIT_TEST',
+   736→        description: 'Given a \`List<Integer>\` of order amounts, use streams to: (1) filter amounts > 50, (2) apply 10% tax to each, (3) find the maximum taxed amount. Method: \`public static double findMaxTaxedOrder(List<Integer> amounts)\`. Return 0.0 if the filtered list is empty. Use \`mapToDouble\` and \`max\`.',
+   737→        starterCode: 'import java.util.List;\nimport java.util.OptionalDouble;\n\npublic class OrderAnalyzer {\n    public static double findMaxTaxedOrder(List<Integer> amounts) {\n        // Use streams: filter > 50, apply 10% tax, find max\n        return 0.0;\n    }\n    public static void main(String[] args) {\n        List<Integer> orders = List.of(20, 50, 100, 150, 75, 200, 30);
+   738→        System.out.println(findMaxTaxedOrder(orders)); // Should print 220.0 (200 * 1.1)
+   739→    }\n}',
+   740→        referenceSolution: 'import java.util.List;\npublic class OrderAnalyzer {\n    public static double findMaxTaxedOrder(List<Integer> amounts) {\n        return amounts.stream()\n            .filter(a -> a > 50)\n            .mapToDouble(a -> a * 1.1)\n            .max()\n            .orElse(0.0);\n    }\n    public static void main(String[] args) {\n        List<Integer> orders = List.of(20, 50, 100, 150, 75, 200, 30);\n        System.out.println(findMaxTaxedOrder(orders));\n    }\n}',
+   741→        testCode: 'Test with various lists, empty list, all below threshold',
+   742→        hints: '["Start with amounts.stream()", "Chain .filter(a -> a > 50) then .mapToDouble(a -> a * 1.1)", "Use .max().orElse(0.0) to handle empty results"]',
+   743→        difficulty: 'STANDARD', xpReward: 50, lessonId: l10.id
+   744→      }
+   745→    })
+   746→
+   747→    // Add a couple more lessons for richness
+   748→    const l11 = await db.lesson.create({
+   749→      data: { title: 'Interfaces & Abstract Classes', slug: 'interfaces-abstract', difficulty: 'STANDARD',
+   750→        contextIntro: 'Your team is designing a plugin system. Different payment gateways (Stripe, Razorpay, PayPal) must implement a common interface so the checkout code does not care which provider is used.',
+   751→        skillTags: 'OOP,Interfaces,Design', order: 3, moduleId: m3.id,
+   752→        content: `# Interfaces & Abstract Classes
+   753→
+   754→## The Scenario
+   755→Your startup supports multiple payment providers. When you switch from Stripe to Razorpay, the checkout code should not need to change. Interfaces make this possible.
+   756→
+   757→## Interface
+   758→\`\`\`java
+   759→public interface PaymentGateway {
+   760→    boolean charge(double amount);
+   761→    boolean refund(String transactionId);
+   762→    default String getProviderName() {
+   763→        return "Unknown";
+   764→    }
+   765→}
+   766→\`\`\`
+   767→
+   768→## Implementation
+   769→\`\`\`java
+   770→public class StripeGateway implements PaymentGateway {
+   771→    public boolean charge(double amount) {
+   772→        System.out.println("Stripe: Charging $" + amount);
+   773→        return true;
+   774→    }
+   775→    public boolean refund(String txnId) {
+   776→        System.out.println("Stripe: Refunding " + txnId);
+   777→        return true;
+   778→    }
+   779→    public String getProviderName() { return "Stripe"; }
+   780→}
+   781→\`\`\`
+   782→
+   783→## Interface vs Abstract Class
+   784→- **Interface**: "can-do" contract (what). Multiple inheritance.
+   785→- **Abstract class**: "is-a" partial implementation (how + what). Single inheritance.
+   786→`
+   787→      }
+   788→    })
+   789→
+   790→    await db.exercise.create({
+   791→      data: {
+   792→        title: 'Implement a Notifiable Interface', type: 'UNIT_TEST',
+   793→        description: 'Create an interface \`Notifiable\` with method \`void send(String message)\` and a default method \`String getType()\` returning \"generic\". Create two implementations: \`EmailNotifier\` (send prints \"Email: message\", getType returns \"email\") and \`SMSNotifier\` (send prints \"SMS: message\", getType returns \"sms\").',
+   794→        starterCode: '// Create your interface and classes here\n\npublic class NotificationDemo {\n    public static void main(String[] args) {\n        Notifiable email = new EmailNotifier();\n        Notifiable sms = new SMSNotifier();\n        email.send(\"Hello\");\n        sms.send(\"World\");\n    }\n}',
+   795→        referenceSolution: 'public interface Notifiable {\n    void send(String message);\n    default String getType() { return "generic"; }\n}\npublic class EmailNotifier implements Notifiable {\n    public void send(String message) { System.out.println("Email: " + message); }\n    public String getType() { return "email"; }\n}\npublic class SMSNotifier implements Notifiable {\n    public void send(String message) { System.out.println("SMS: " + message); }\n    public String getType() { return "sms"; }\n}',
+   796→        testCode: 'Test interface polymorphism',
+   797→        hints: '["Use the interface and default keywords", "Implementing classes use implements Notifiable", "Override getType() in each implementation"]',
+   798→        difficulty: 'STANDARD', xpReward: 50, lessonId: l11.id
+   799→      }
+   800→    })
+   801→
+   802→    const l12 = await db.lesson.create({
+   803→      data: { title: 'HashSet & TreeSet', slug: 'set-collections', difficulty: 'STANDARD',
+   804→        contextIntro: 'You need to track unique tags on user posts and display them in alphabetical order. HashSet for uniqueness, TreeSet for sorted uniqueness.',
+   805→        skillTags: 'Collections,Set,HashSet', order: 3, moduleId: m4.id,
+   806→        content: `# Set Collections
+   807→
+   808→## The Scenario
+   809→Your content platform needs to track unique tags. Users might add \"java\" 100 times, but it should only appear once in the tag list. \`HashSet\` gives you O(1) uniqueness checks.
+   810→
+   811→## HashSet
+   812→\`\`\`java
+   813→Set<String> tags = new HashSet<>();
+   814→tags.add("java");
+   815→tags.add("spring");
+   816→tags.add("java");  // Duplicate — ignored!
+   817→System.out.println(tags.size());  // 2
+   818→\`\`\`
+   819→
+   820→## TreeSet (Sorted)
+   821→\`\`\`java
+   822→Set<String> sortedTags = new TreeSet<>();
+   823→sortedTags.add("zebra");
+   824→sortedTags.add("apple");
+   825→sortedTags.add("mango");
+   826→// Iterates in alphabetical order: apple, mango, zebra
+   827→\`\`\`
+   828→`
+   829→      }
+   830→    })
+   831→
+   832→    await db.exercise.create({
+   833→      data: {
+   834→        title: 'Build a Duplicate Remover', type: 'UNIT_TEST',
+   835→        description: 'Write a method \`public static List<String> removeDuplicates(List<String> items)\` that returns a new list with duplicates removed, preserving insertion order. Use \`LinkedHashSet\` internally. Handle null input by returning an empty list.',
+   836→        starterCode: 'import java.util.*;\n\npublic class DuplicateRemover {\n    public static List<String> removeDuplicates(List<String> items) {\n        // Use LinkedHashSet to remove duplicates while preserving order\n        return new ArrayList<>();\n    }\n    public static void main(String[] args) {\n        List<String> input = List.of("a", "b", "a", "c", "b", "d");\n        System.out.println(removeDuplicates(input)); // [a, b, c, d]\n    }\n}',
+   837→        referenceSolution: 'import java.util.*;\npublic class DuplicateRemover {\n    public static List<String> removeDuplicates(List<String> items) {\n        if (items == null) return new ArrayList<>();\n        return new ArrayList<>(new LinkedHashSet<>(items));\n    }\n    public static void main(String[] args) {\n        System.out.println(removeDuplicates(List.of("a", "b", "a", "c", "b", "d")));\n    }\n}',
+   838→        testCode: 'Test with duplicates, null, empty list',
+   839→        hints: '["LinkedHashSet preserves insertion order while removing duplicates", "Simply wrap the list: new LinkedHashSet<>(items)", "Convert back to ArrayList for the return value"]',
+   840→        difficulty: 'STANDARD', xpReward: 50, lessonId: l12.id
+   841→      }
+   842→    })
+   843→
+   844→    // Create some demo users for leaderboard
+   845→    const demoUsers = [
+   846→      { username: 'Aman', email: 'aman@codeforge.dev', passwordHash: 'demo', displayName: 'Aman', xp: 2400, streak: 7, exercisesCompleted: 42 },
+   847→      { username: 'Rahul', email: 'rahul@codeforge.dev', passwordHash: 'demo', displayName: 'Rahul', xp: 1800, streak: 5, exercisesCompleted: 31 },
+   848→      { username: 'Priya', email: 'priya@codeforge.dev', passwordHash: 'demo', displayName: 'Priya', xp: 3200, streak: 12, exercisesCompleted: 55 },
+   849→      { username: 'Dev', email: 'dev@codeforge.dev', passwordHash: 'demo', displayName: 'Dev', xp: 900, streak: 3, exercisesCompleted: 18 },
+   850→      { username: 'Sara', email: 'sara@codeforge.dev', passwordHash: 'demo', displayName: 'Sara', xp: 1500, streak: 9, exercisesCompleted: 28 },
+   851→      { username: 'Mike', email: 'mike@codeforge.dev', passwordHash: 'demo', displayName: 'Mike', xp: 4100, streak: 15, exercisesCompleted: 72 },
+   852→      { username: 'Zara', email: 'zara@codeforge.dev', passwordHash: 'demo', displayName: 'Zara', xp: 2700, streak: 8, exercisesCompleted: 48 },
+   853→    ]
+   854→
+   855→    for (const u of demoUsers) {
+   856→      const user = await db.user.create({ data: u })
+   857→      // Give some badges to demo users
+   858→      if (u.exercisesCompleted >= 10) {
+   859→        const badge = await db.badge.findFirst({ where: { triggerValue: 10, category: 'GRIND' } })
+   860→        if (badge) await db.userBadge.create({ data: { userId: user.id, badgeId: badge.id } })
+   861→      }
+   862→      if (u.streak >= 7) {
+   863→        const badge = await db.badge.findFirst({ where: { triggerValue: 7, category: 'STREAK' } })
+   864→        if (badge) await db.userBadge.create({ data: { userId: user.id, badgeId: badge.id } })
+   865→      }
+   866→    }
+   867→
+   868→    return NextResponse.json({ 
+   869→      message: 'Database seeded successfully!',
+   870→      stats: {
+   871→        paths: 5,
+   872→        modules: 6,
+   873→        lessons: 12,
+   874→        exercises: 12,
+   875→        badges: 18,
+   876→        demoUsers: 7
+   877→      }
+   878→    })
+   879→  } catch (error) {
+   880→    console.error('Seed error:', error)
+   881→    return NextResponse.json({ error: String(error) }, { status: 500 })
+   882→  }
+   883→}

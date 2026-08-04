@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       }
 
       const existing = await db.user.findFirst({
-        where: { OR: [{ username }, { email }]
+        where: { OR: [{ username }, { email }] }
       })
       if (existing) {
         return NextResponse.json({ error: 'Username or email already taken' }, { status: 409 })

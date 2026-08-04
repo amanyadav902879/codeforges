@@ -498,10 +498,7 @@ upi.process();    // UPI-specific logic
       data: {
         title: 'Build a Payment Hierarchy', type: 'UNIT_TEST',
         description: 'Create an abstract class \`PaymentMethod\` with a constructor taking \`double amount\`, an abstract method \`public abstract boolean process()\`, and a concrete method \`public double getAmount()\`. Then create two subclasses: \`CreditCardPayment\` (process returns true and prints "Processing credit card: $amount") and \`UpiPayment\` (process returns true and prints "Processing UPI: $amount").',
-        starterCode: '// Create your classes here\n\npublic class PaymentDemo {\n    public static void main(String[] args) {\n        // This should work:
-        PaymentMethod cc = new CreditCardPayment(100.0);
-        PaymentMethod upi = new UpiPayment(50.0);\n        cc.process();
-        upi.process();\n    }\n}',
+        starterCode: '// Create your classes here\n\npublic class PaymentDemo {\n    public static void main(String[] args) {\n        // This should work:\n        PaymentMethod cc = new CreditCardPayment(100.0);\n        PaymentMethod upi = new UpiPayment(50.0);\n        cc.process();\n        upi.process();\n    }\n}',
         referenceSolution: 'public abstract class PaymentMethod {\n    protected double amount;\n    public PaymentMethod(double amount) { this.amount = amount; }\n    public abstract boolean process();\n    public double getAmount() { return amount; }\n}\npublic class CreditCardPayment extends PaymentMethod {\n    public CreditCardPayment(double amount) { super(amount); }\n    public boolean process() { System.out.println("Processing credit card: $" + amount); return true; }\n}\npublic class UpiPayment extends PaymentMethod {\n    public UpiPayment(double amount) { super(amount); }\n    public boolean process() { System.out.println("Processing UPI: $" + amount); return true; }\n}',
         testCode: 'Test polymorphic calls to process()',
         hints: '["Use the abstract keyword for the class and the process method", "Subclasses use extends PaymentMethod", "Call super(amount) in subclass constructors"]',
@@ -734,9 +731,7 @@ Map<Boolean, List<Order>> partitioned = orders.stream()
       data: {
         title: 'Analyze Order Data with Streams', type: 'UNIT_TEST',
         description: 'Given a \`List<Integer>\` of order amounts, use streams to: (1) filter amounts > 50, (2) apply 10% tax to each, (3) find the maximum taxed amount. Method: \`public static double findMaxTaxedOrder(List<Integer> amounts)\`. Return 0.0 if the filtered list is empty. Use \`mapToDouble\` and \`max\`.',
-        starterCode: 'import java.util.List;\nimport java.util.OptionalDouble;\n\npublic class OrderAnalyzer {\n    public static double findMaxTaxedOrder(List<Integer> amounts) {\n        // Use streams: filter > 50, apply 10% tax, find max\n        return 0.0;\n    }\n    public static void main(String[] args) {\n        List<Integer> orders = List.of(20, 50, 100, 150, 75, 200, 30);
-        System.out.println(findMaxTaxedOrder(orders)); // Should print 220.0 (200 * 1.1)
-    }\n}',
+        starterCode: 'import java.util.List;\nimport java.util.OptionalDouble;\n\npublic class OrderAnalyzer {\n    public static double findMaxTaxedOrder(List<Integer> amounts) {\n        // Use streams: filter > 50, apply 10% tax, find max\n        return 0.0;\n    }\n    public static void main(String[] args) {\n        List<Integer> orders = List.of(20, 50, 100, 150, 75, 200, 30);\n        System.out.println(findMaxTaxedOrder(orders)); // Should print 220.0 (200 * 1.1)\n    }\n}',
         referenceSolution: 'import java.util.List;\npublic class OrderAnalyzer {\n    public static double findMaxTaxedOrder(List<Integer> amounts) {\n        return amounts.stream()\n            .filter(a -> a > 50)\n            .mapToDouble(a -> a * 1.1)\n            .max()\n            .orElse(0.0);\n    }\n    public static void main(String[] args) {\n        List<Integer> orders = List.of(20, 50, 100, 150, 75, 200, 30);\n        System.out.println(findMaxTaxedOrder(orders));\n    }\n}',
         testCode: 'Test with various lists, empty list, all below threshold',
         hints: '["Start with amounts.stream()", "Chain .filter(a -> a > 50) then .mapToDouble(a -> a * 1.1)", "Use .max().orElse(0.0) to handle empty results"]',
