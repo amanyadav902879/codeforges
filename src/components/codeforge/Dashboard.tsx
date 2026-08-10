@@ -1,17 +1,18 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppStore } from './store'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Flame, Zap, BookOpen, Trophy, Target, Clock, ArrowRight, Loader2, Star } from 'lucide-react'
+import { Flame, Zap, BookOpen, Trophy, Target, ArrowRight, Loader2, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export function Dashboard() {
   const { user, token, paths, setView, setCurrentPath, setUser } = useAppStore()
   const [dailyChallenge, setDailyChallenge] = useState<any>(null)
+  const [pathProgress, setPathProgress] = useState<Record<string, number>>({})
 
   useEffect(() => {
     if (!token) return
@@ -29,16 +30,25 @@ export function Dashboard() {
       if (data.exercise) setDailyChallenge(data.exercise)
     }).catch(() => {})
 
+    // Fetch real progress for all paths
+    const fetchProgress = async () => {
+      const prog: Record<string, number> = {}
+      for (const p of paths) {
+        try {
+          const res = await fetch(`/api/paths/${p.slug}?userId=${token}`)
+          const data = await res.json()
+          const progress = data.progress || {}
+          const totalLessons = p.modules?.reduce((s: number, m: any) => s + (m.lessons?.length || 0), 0) || 0
+          const completed = Object.values(progress).filter((v: any) => v.status === 'COMPLETED').length
+          if (totalLessons > 0) {
+            prog[p.slug] = Math.round((completed / totalLessons) * 100)
+          }
+        } catch { prog[p.slug] = 0 }
+      }
+      setPathProgress(prog)
+    }
+    fetchProgress()
   }, [token, paths])
-
-  const pathProgress = useMemo(() => {
-    const prog: Record<string, number> = {}
-    paths.forEach(p => {
-      const totalLessons = p.modules?.reduce((s: number, m: any) => s + (m.lessons?.length || 0), 0) || 0
-      if (totalLessons > 0) prog[p.slug] = Math.min(100, Math.round((Math.random() * 30) / totalLessons * 100))
-    })
-    return prog
-  }, [paths])
 
   const statCards = [
     { label: 'Total XP', value: user?.xp?.toLocaleString() || '0', icon: Zap, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
@@ -56,7 +66,7 @@ export function Dashboard() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold">Welcome back, {user?.displayName || 'Developer'}!</h1>
-                <p className="mt-1 text-muted-foreground">Continue your learning journey. You're making great progress.</p>
+                <p className="mt-1 text-muted-foreground">Continue your Java learning journey. Pick up where you left off.</p>
               </div>
               {user?.streak > 0 && (
                 <div className="flex items-center gap-2 rounded-full bg-background px-4 py-2 border border-border">
@@ -105,9 +115,6 @@ export function Dashboard() {
               </span>
             </div>
             <Progress value={user?.levelProgress || 0} className="h-3" />
-            {user?.level && user.level < 3 && (
-              <p className="mt-2 text-xs text-muted-foreground">Next unlock at Level 3: Custom avatar upload</p>
-            )}
           </CardContent>
         </Card>
       </motion.div>
@@ -122,7 +129,7 @@ export function Dashboard() {
             </Button>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
-            {paths.slice(0, 4).map((p, i) => (
+            {paths.map((p, i) => (
               <motion.div key={p.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}>
                 <Card
                   className="border-border/50 cursor-pointer hover:border-orange-500/30 transition-all hover:shadow-md hover:shadow-orange-500/5"
@@ -142,7 +149,7 @@ export function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    {pathProgress[p.slug] !== undefined && (
+                    {pathProgress[p.slug] !== undefined && pathProgress[p.slug] > 0 && (
                       <div className="mt-3">
                         <Progress value={pathProgress[p.slug]} className="h-1.5" />
                         <p className="text-xs text-muted-foreground mt-1">{pathProgress[p.slug]}% complete</p>
@@ -155,7 +162,7 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* Sidebar: Daily Challenge + Quick Actions */}
+        {/* Sidebar */}
         <div className="space-y-4">
           {dailyChallenge && (
             <Card className="border-orange-500/30 bg-orange-500/5">

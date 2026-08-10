@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import bcrypt from 'bcryptjs'
 
 export async function POST() {
   try {
@@ -20,11 +21,11 @@ export async function POST() {
 
     // Create Badges
     const badgeData = [
-      { name: 'First Steps', description: 'Complete your first exercise', icon: '🎯', category: 'GRIND', rarity: 'COMMON', triggerValue: 1 },
-      { name: 'Getting Warmed Up', description: 'Complete 10 exercises', icon: '🔥', category: 'GRIND', rarity: 'COMMON', triggerValue: 10 },
-      { name: 'Code Warrior', description: 'Complete 50 exercises', icon: '⚔️', category: 'GRIND', rarity: 'RARE', triggerValue: 50 },
-      { name: 'Century', description: 'Complete 100 exercises', icon: '💯', category: 'GRIND', rarity: 'EPIC', triggerValue: 100 },
-      { name: 'Kilobyte', description: 'Complete 1000 exercises', icon: '🏗️', category: 'GRIND', rarity: 'LEGENDARY', triggerValue: 1000 },
+      { name: 'First Steps', description: 'Complete your first Java exercise', icon: '🎯', category: 'GRIND', rarity: 'COMMON', triggerValue: 1 },
+      { name: 'Getting Warmed Up', description: 'Complete 10 Java exercises', icon: '🔥', category: 'GRIND', rarity: 'COMMON', triggerValue: 10 },
+      { name: 'Code Warrior', description: 'Complete 50 Java exercises', icon: '⚔️', category: 'GRIND', rarity: 'RARE', triggerValue: 50 },
+      { name: 'Java Expert', description: 'Complete 100 Java exercises', icon: '💯', category: 'GRIND', rarity: 'EPIC', triggerValue: 100 },
+      { name: 'Java Master', description: 'Complete 500 Java exercises', icon: '🏗️', category: 'GRIND', rarity: 'LEGENDARY', triggerValue: 500 },
       { name: '3-Day Streak', description: 'Maintain a 3-day learning streak', icon: '📅', category: 'STREAK', rarity: 'COMMON', triggerValue: 3 },
       { name: '7-Day Streak', description: 'Maintain a 7-day learning streak', icon: '💪', category: 'STREAK', rarity: 'RARE', triggerValue: 7 },
       { name: '30-Day Streak', description: 'Maintain a 30-day learning streak', icon: '⚡', category: 'STREAK', rarity: 'EPIC', triggerValue: 30 },
@@ -33,846 +34,314 @@ export async function POST() {
       { name: 'Level 10', description: 'Reach Level 10', icon: '🌟', category: 'LEVEL', rarity: 'COMMON', triggerValue: 10 },
       { name: 'Level 25', description: 'Reach Level 25', icon: '💫', category: 'LEVEL', rarity: 'RARE', triggerValue: 25 },
       { name: 'Level 50', description: 'Reach Level 50', icon: '🏅', category: 'LEVEL', rarity: 'EPIC', triggerValue: 50 },
-      { name: 'CodeForge Master', description: 'Reach Level 100', icon: '👑', category: 'LEVEL', rarity: 'MYTHIC', triggerValue: 100 },
+      { name: 'Java Grandmaster', description: 'Reach Level 100', icon: '👑', category: 'LEVEL', rarity: 'MYTHIC', triggerValue: 100 },
       { name: 'XP Hunter', description: 'Earn 1000 XP', icon: '✨', category: 'XP', rarity: 'COMMON', triggerValue: 1000 },
       { name: 'XP Legend', description: 'Earn 10000 XP', icon: '🌈', category: 'XP', rarity: 'EPIC', triggerValue: 10000 },
-      { name: 'Night Owl', description: 'Complete an exercise between midnight and 5 AM', icon: '🦉', category: 'STREAK', rarity: 'RARE', triggerValue: 0 },
       { name: 'Speed Demon', description: 'Complete an exercise in under 30 seconds', icon: '💨', category: 'GRIND', rarity: 'RARE', triggerValue: 0 },
+      { name: 'Perfect Score', description: 'Get 100% on 10 exercises', icon: '🏆', category: 'GRIND', rarity: 'RARE', triggerValue: 0 },
     ]
 
     for (const b of badgeData) {
       await db.badge.create({ data: b })
     }
 
-    // Create Learning Paths
-    const javaPath = await db.learningPath.create({
+    // ====== JAVA-ONLY LEARNING PATHS ======
+
+    // PATH 1: Java Fundamentals
+    const javaFundamentals = await db.learningPath.create({
       data: {
         title: 'Java Fundamentals',
         slug: 'java-fundamentals',
-        description: 'Master Java from variables to concurrency. Every concept is taught through real-world scenarios — not toy examples.',
+        description: 'Master Java basics — variables, data types, operators, control flow, and your first programs. Build a solid foundation for everything else.',
         icon: '☕',
         color: '#f97316',
-        targetAudience: 'Beginners + PHP devs',
-        estimatedLessons: 12,
+        targetAudience: 'Complete beginners',
+        estimatedLessons: 15,
         order: 1
       }
     })
 
-    const springPath = await db.learningPath.create({
+    // Module 1: Variables & Data Types
+    const m1 = await db.module.create({
+      data: { title: 'Variables & Data Types', description: 'Learn about primitive types, variables, constants, and type casting in Java', order: 1, pathId: javaFundamentals.id }
+    })
+
+    const l1_1 = await db.lesson.create({
+      data: { title: 'Primitive Data Types', slug: 'primitive-types', difficulty: 'BEGINNER', order: 1, moduleId: m1.id, content: 'Java has 8 primitive data types:\n\n1. int — whole numbers (32-bit): int age = 25;\n2. long — large whole numbers (64-bit): long population = 7800000000L;\n3. double — decimal numbers (64-bit): double price = 19.99;\n4. float — decimal numbers (32-bit): float rate = 4.5f;\n5. boolean — true/false: boolean isJavaFun = true;\n6. char — single character: char grade = \'A\';\n7. byte — small integer (8-bit): byte x = 127;\n8. short — medium integer (16-bit): short year = 2024;\n\nKey rules:\n- int is the default integer type\n- double is the default decimal type\n- Use L suffix for long literals, f for float\n- char uses single quotes, String uses double quotes\n\nExample:\npublic class DataTypes {\n    public static void main(String[] args) {\n        int studentCount = 150;\n        double averageScore = 85.5;\n        boolean isPassed = averageScore >= 40.0;\n        char section = \'B\';\n        System.out.println("Students: " + studentCount);\n        System.out.println("Average: " + averageScore);\n        System.out.println("Passed: " + isPassed);\n        System.out.println("Section: " + section);\n    }\n}', contextIntro: 'In Java, every variable has a data type. This lesson covers the 8 primitive types that are the building blocks of all Java programs.', skillTags: 'variables,primitives,int,double,boolean,char' }
+    })
+    await db.exercise.create({ data: { title: 'Declare Student Record', description: 'Create a method that declares and returns the sum of an int score and a double bonus as a double.', starterCode: 'public class Solution {\n    public static double calculateTotal(int score, double bonus) {\n        // Your code here\n        return 0.0;\n    }\n}', testCode: 'score + bonus', referenceSolution: 'public class Solution {\n    public static double calculateTotal(int score, double bonus) {\n        double total = score + bonus;\n        return total;\n    }\n}', hints: '["Remember that int + double automatically promotes int to double", "You can use: double total = score + bonus;"]', difficulty: 'BEGINNER', xpReward: 25, lessonId: l1_1.id } })
+
+    const l1_2 = await db.lesson.create({
+      data: { title: 'String Basics', slug: 'string-basics', difficulty: 'BEGINNER', order: 2, moduleId: m1.id, content: 'String is NOT a primitive — it\'s a class in Java, but it\'s so commonly used that it has special syntax.\n\nCreating Strings:\nString name = "CodeForge";       // String literal\nString msg = new String("Hi"); // Using constructor (rarely used)\n\nCommon String Methods:\n- .length() — number of characters: "Hello".length() → 5\n- .charAt(index) — character at position: "Hello".charAt(0) → \'H\'\n- .substring(start, end) — extract portion: "Hello".substring(0, 3) → "Hel"\n- .toUpperCase() / .toLowerCase() — case conversion\n- .trim() — removes leading/trailing whitespace\n- .contains(str) — checks if substring exists\n- .equals(str) — compare content (NOT ==)\n- .indexOf(str) — find position of substring\n- .replace(old, new) — replace substring\n\nString Concatenation:\nString full = "Hello" + " " + "World";  // "Hello World"\nString result = "Count: " + 42;           // "Count: 42" (auto conversion)\n\nString Immutability:\nStrings in Java are immutable — once created, they cannot be changed.\nAny "modification" creates a new String object.\n\nExample:\npublic class StringDemo {\n    public static void main(String[] args) {\n        String name = "CodeForge";\n        System.out.println(name.length());         // 9\n        System.out.println(name.toUpperCase());   // "CODEFORGE"\n        System.out.println(name.substring(4, 9));  // "Forge"\n        System.out.println(name.contains("Code")); // true\n    }\n}', contextIntro: 'Strings are the most used data type in Java. Learn how to create, manipulate, and compare Strings properly.', skillTags: 'string,methods,concatenation,immutability' }
+    })
+    await db.exercise.create({ data: { title: 'Reverse a String', description: 'Write a method that takes a String and returns it reversed. For example, "hello" → "olleh".', starterCode: 'public class Solution {\n    public static String reverse(String str) {\n        // Your code here\n        return "";\n    }\n}', testCode: 'new StringBuilder(str).reverse().toString()', referenceSolution: 'public class Solution {\n    public static String reverse(String str) {\n        String reversed = "";\n        for (int i = str.length() - 1; i >= 0; i--) {\n            reversed += str.charAt(i);\n        }\n        return reversed;\n    }\n}', hints: '["Use a for loop starting from the last character (str.length()-1) going to 0", "Build the result by adding each character: reversed += str.charAt(i)", "You can also use StringBuilder.reverse() for a shorter solution"]', difficulty: 'BEGINNER', xpReward: 30, lessonId: l1_2.id } })
+
+    const l1_3 = await db.lesson.create({
+      data: { title: 'Type Casting & Conversion', slug: 'type-casting', difficulty: 'BEGINNER', order: 3, moduleId: m1.id, content: 'Type casting converts a value from one type to another.\n\nWidening (Automatic — smaller to larger):\nbyte → short → int → long → float → double\n\nint num = 100;\ndouble d = num;  // automatic (widening)\n\nNarrowing (Manual — larger to smaller, may lose data):\ndouble pi = 3.14;\nint n = (int) pi;  // manual cast → n = 3 (decimal lost)\n\nCommon Conversions:\n- String to int: int x = Integer.parseInt("42");\n- String to double: double d = Double.parseDouble("3.14");\n- int to String: String s = String.valueOf(42);\n- int to char: char c = (char) 65;  // c = \'A\'\n\nExample:\npublic class CastingDemo {\n    public static void main(String[] args) {\n        int price = 100;\n        double tax = 0.18;\n        double total = price * (1 + tax);  // int promoted to double\n        System.out.println("Total: " + total);  // 118.0\n\n        double exact = 118.76;\n        int rounded = (int) exact;  // 118 (truncated, not rounded)\n        System.out.println("Rounded: " + rounded);\n    }\n}', contextIntro: 'Learn how to convert between types in Java — both automatic widening and manual narrowing conversions.', skillTags: 'casting,conversion,Integer.parseInt,type-widening' }
+    })
+    await db.exercise.create({ data: { title: 'Convert String to Number', description: 'Write a method that takes a String representation of a number and returns the sum of its digits as an int. For "123" return 6 (1+2+3).', starterCode: 'public class Solution {\n    public static int sumDigits(String numStr) {\n        // Your code here\n        return 0;\n    }\n}', testCode: 'sum of digits', referenceSolution: 'public class Solution {\n    public static int sumDigits(String numStr) {\n        int sum = 0;\n        for (int i = 0; i < numStr.length(); i++) {\n            char c = numStr.charAt(i);\n            int digit = c - \'0\';\n            sum += digit;\n        }\n        return sum;\n    }\n}', hints: '["Loop through each character in the string", "Convert char to int digit using: char c - \'0\'", "Accumulate the sum and return it"]', difficulty: 'BEGINNER', xpReward: 35, lessonId: l1_3.id } })
+
+    // Module 2: Control Flow
+    const m2 = await db.module.create({
+      data: { title: 'Control Flow', description: 'Master if/else, switch, for loops, while loops, and break/continue statements', order: 2, pathId: javaFundamentals.id }
+    })
+
+    const l2_1 = await db.lesson.create({
+      data: { title: 'If-Else & Switch', slug: 'if-else-switch', difficulty: 'BEGINNER', order: 1, moduleId: m2.id, content: 'Conditional statements control program flow based on conditions.\n\nif-else:\nif (condition) {\n    // runs when condition is true\n} else if (anotherCondition) {\n    // runs when anotherCondition is true\n} else {\n    // runs when nothing above is true\n}\n\nSwitch (good for multiple discrete values):\nswitch (day) {\n    case "MON":\n        System.out.println("Start of week");\n        break;\n    case "FRI":\n        System.out.println("Almost weekend");\n        break;\n    default:\n        System.out.println("Regular day");\n}\n\nTernary Operator (shorthand):\nString result = (marks >= 40) ? "Pass" : "Fail";\n\nExample:\npublic class Grading {\n    public static String getGrade(int score) {\n        if (score >= 90) return "A";\n        else if (score >= 80) return "B";\n        else if (score >= 70) return "C";\n        else if (score >= 40) return "D";\n        else return "F";\n    }\n}', contextIntro: 'Decision-making is fundamental to programming. Learn how to use if-else, switch, and ternary operators in Java.', skillTags: 'if-else,switch,ternary,conditions' }
+    })
+    await db.exercise.create({ data: { title: 'FizzBuzz', description: 'Write a method that returns "Fizz" if n is divisible by 3, "Buzz" if by 5, "FizzBuzz" if by both, or the number as String otherwise.', starterCode: 'public class Solution {\n    public static String fizzBuzz(int n) {\n        // Your code here\n        return "";\n    }\n}', testCode: 'n%3==0 && n%5==0 fizzbuzz, n%3 fizz, n%5 buzz', referenceSolution: 'public class Solution {\n    public static String fizzBuzz(int n) {\n        if (n % 3 == 0 && n % 5 == 0) return "FizzBuzz";\n        if (n % 3 == 0) return "Fizz";\n        if (n % 5 == 0) return "Buzz";\n        return String.valueOf(n);\n    }\n}', hints: '["Check divisibility by BOTH 3 and 5 FIRST", "Use the modulo operator: n % 3 == 0 means divisible by 3", "Order matters! Check the combined case before individual cases"]', difficulty: 'BEGINNER', xpReward: 25, lessonId: l2_1.id } })
+
+    const l2_2 = await db.lesson.create({
+      data: { title: 'For & While Loops', slug: 'loops', difficulty: 'BEGINNER', order: 2, moduleId: m2.id, content: 'Loops repeat a block of code multiple times.\n\nFor Loop (when you know iterations):\nfor (int i = 0; i < 5; i++) {\n    System.out.println("Count: " + i);\n}\n\nEnhanced For Loop (iterate arrays/collections):\nint[] nums = {10, 20, 30};\nfor (int num : nums) {\n    System.out.println(num);\n}\n\nWhile Loop (when condition-based):\nint count = 0;\nwhile (count < 5) {\n    System.out.println(count);\n    count++;\n}\n\nDo-While Loop (runs at least once):\nint input;\ndo {\n    input = readInput();\n} while (input != 0);\n\nbreak — exit loop immediately\ncontinue — skip to next iteration\n\nExample:\npublic class Factorial {\n    public static int factorial(int n) {\n        int result = 1;\n        for (int i = 2; i <= n; i++) {\n            result *= i;\n        }\n        return result;\n    }\n}', contextIntro: 'Loops are essential for repeating operations. Master for loops, while loops, and their variations in Java.', skillTags: 'for-loop,while-loop,do-while,enhanced-for' }
+    })
+    await db.exercise.create({ data: { title: 'Sum of First N Numbers', description: 'Write a method that calculates the sum of all numbers from 1 to n (inclusive). For n=5, return 15 (1+2+3+4+5).', starterCode: 'public class Solution {\n    public static int sumToN(int n) {\n        // Your code here\n        return 0;\n    }\n}', testCode: 'n * (n + 1) / 2', referenceSolution: 'public class Solution {\n    public static int sumToN(int n) {\n        int sum = 0;\n        for (int i = 1; i <= n; i++) {\n            sum += i;\n        }\n        return sum;\n    }\n}', hints: '["Use a for loop from 1 to n (inclusive)", "Initialize sum = 0 and add each i to sum", "You can also use the formula: n*(n+1)/2 for O(1) solution"]', difficulty: 'BEGINNER', xpReward: 25, lessonId: l2_2.id } })
+
+    const l2_3 = await db.lesson.create({
+      data: { title: 'Pattern Printing', slug: 'pattern-printing', difficulty: 'STANDARD', order: 3, moduleId: m2.id, content: 'Pattern problems build your understanding of nested loops.\n\nRight Triangle:\n*\n**\n***\n****\n\nCode:\nfor (int i = 1; i <= 4; i++) {\n    for (int j = 1; j <= i; j++) {\n        System.out.print("*");\n    }\n    System.out.println();\n}\n\nNumber Pattern:\n1\n1 2\n1 2 3\n1 2 3 4\n\nCode:\nfor (int i = 1; i <= 4; i++) {\n    for (int j = 1; j <= i; j++) {\n        System.out.print(j + " ");\n    }\n    System.out.println();\n}\n\nInverted Triangle:\n****\n***\n**\n*\n\nCode:\nfor (int i = 4; i >= 1; i--) {\n    for (int j = 1; j <= i; j++) {\n        System.out.print("*");\n    }\n    System.out.println();\n}\n\nKey Concept: The outer loop controls ROWS, the inner loop controls COLUMNS in each row.', contextIntro: 'Pattern printing with nested loops is a classic exercise that strengthens your loop logic and spatial thinking.', skillTags: 'nested-loops,patterns,printing' }
+    })
+    await db.exercise.create({ data: { title: 'Print Pyramid', description: 'Write a method that returns a String representing a pyramid of height n. For n=3, return "\\n  *\\n ***\\n*****" (centered pyramid). Use spaces for alignment.', starterCode: 'public class Solution {\n    public static String pyramid(int n) {\n        // Your code here\n        return "";\n    }\n}', testCode: 'pyramid pattern with spaces', referenceSolution: 'public class Solution {\n    public static String pyramid(int n) {\n        StringBuilder sb = new StringBuilder();\n        for (int i = 1; i <= n; i++) {\n            for (int s = 0; s < n - i; s++) {\n                sb.append(" ");\n            }\n            for (int j = 0; j < 2 * i - 1; j++) {\n                sb.append("*");\n            }\n            sb.append("\\n");\n        }\n        return sb.toString().trim();\n    }\n}', hints: '["For row i: print (n-i) spaces first, then (2*i-1) stars", "Use StringBuilder to build the result efficiently", "The number of stars follows the pattern: 1, 3, 5, 7... = 2*i-1"]', difficulty: 'STANDARD', xpReward: 40, lessonId: l2_3.id } })
+
+    // Module 3: Arrays
+    const m3 = await db.module.create({
+      data: { title: 'Arrays & Sorting', description: 'Work with arrays — declaration, traversal, searching, sorting, and common array algorithms', order: 3, pathId: javaFundamentals.id }
+    })
+
+    const l3_1 = await db.lesson.create({
+      data: { title: 'Array Basics', slug: 'array-basics', difficulty: 'BEGINNER', order: 1, moduleId: m3.id, content: 'Arrays store multiple values of the same type.\n\nDeclaration:\nint[] numbers = new int[5];           // size 5, all zeros\nint[] nums = {1, 2, 3, 4, 5};         // initialized\nString[] names = {"Amit", "Priya"};    // String array\n\nAccess & Modify:\nint first = nums[0];    // 1 (0-indexed)\nnums[2] = 10;           // {1, 2, 10, 4, 5}\nint len = nums.length;  // 5\n\nIterate:\nfor (int i = 0; i < nums.length; i++) {\n    System.out.println(nums[i]);\n}\n// Enhanced for loop:\nfor (int num : nums) {\n    System.out.println(num);\n}\n\nUseful Operations:\n- Find max: loop and compare\n- Find sum: accumulate in variable\n- Search: linear search with loop\n\nExample:\npublic class ArrayOps {\n    public static int findMax(int[] arr) {\n        int max = arr[0];\n        for (int num : arr) {\n            if (num > max) max = num;\n        }\n        return max;\n    }\n}', contextIntro: 'Arrays are the most basic data structure in Java. Learn how to create, access, modify, and iterate over arrays.', skillTags: 'arrays,indexing,iteration,length' }
+    })
+    await db.exercise.create({ data: { title: 'Find Maximum in Array', description: 'Write a method that finds and returns the maximum value in an integer array.', starterCode: 'public class Solution {\n    public static int findMax(int[] arr) {\n        // Your code here\n        return 0;\n    }\n}', testCode: 'max element in array', referenceSolution: 'public class Solution {\n    public static int findMax(int[] arr) {\n        int max = arr[0];\n        for (int i = 1; i < arr.length; i++) {\n            if (arr[i] > max) {\n                max = arr[i];\n            }\n        }\n        return max;\n    }\n}', hints: '["Initialize max with the first element arr[0]", "Loop through the array starting from index 1", "Update max whenever you find a larger element"]', difficulty: 'BEGINNER', xpReward: 25, lessonId: l3_1.id } })
+
+    const l3_2 = await db.lesson.create({
+      data: { title: 'Linear & Binary Search', slug: 'searching', difficulty: 'STANDARD', order: 2, moduleId: m3.id, content: 'Searching finds an element\'s position in an array.\n\nLinear Search (works on any array):\npublic int linearSearch(int[] arr, int target) {\n    for (int i = 0; i < arr.length; i++) {\n        if (arr[i] == target) return i;\n    }\n    return -1; // not found\n}\nTime: O(n)\n\nBinary Search (ONLY works on SORTED arrays):\npublic int binarySearch(int[] arr, int target) {\n    int low = 0, high = arr.length - 1;\n    while (low <= high) {\n        int mid = (low + high) / 2;\n        if (arr[mid] == target) return mid;\n        if (arr[mid] < target) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}\nTime: O(log n)\n\nHow Binary Search Works:\n1. Start with low=0, high=length-1\n2. Find middle element\n3. If middle == target → found!\n4. If target < middle → search left half\n5. If target > middle → search right half\n6. Repeat until found or low > high\n\nJava Built-in: Arrays.binarySearch(arr, target)', contextIntro: 'Learn two fundamental search algorithms — linear search for any array and binary search for sorted arrays.', skillTags: 'searching,linear-search,binary-search,sorted-array' }
+    })
+    await db.exercise.create({ data: { title: 'Binary Search', description: 'Implement binary search on a sorted integer array. Return the index of the target, or -1 if not found.', starterCode: 'public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Your code here\n        return -1;\n    }\n}', testCode: 'binary search implementation', referenceSolution: 'public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        int low = 0;\n        int high = arr.length - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (arr[mid] == target) return mid;\n            if (arr[mid] < target) low = mid + 1;\n            else high = mid - 1;\n        }\n        return -1;\n    }\n}', hints: '["Use low=0 and high=arr.length-1", "Find mid = low + (high-low)/2 to avoid overflow", "Compare arr[mid] with target and narrow the range", "Return -1 when low > high (element not found)"]', difficulty: 'STANDARD', xpReward: 40, lessonId: l3_2.id } })
+
+    const l3_3 = await db.lesson.create({
+      data: { title: 'Bubble Sort', slug: 'bubble-sort', difficulty: 'STANDARD', order: 3, moduleId: m3.id, content: 'Bubble Sort repeatedly swaps adjacent elements that are in wrong order.\n\nAlgorithm:\n1. Start from first element\n2. Compare current with next element\n3. If current > next, swap them\n4. Move to next pair\n5. After one full pass, largest element is at end\n6. Repeat for remaining elements\n\nCode:\npublic static void bubbleSort(int[] arr) {\n    int n = arr.length;\n    for (int i = 0; i < n - 1; i++) {\n        for (int j = 0; j < n - i - 1; j++) {\n            if (arr[j] > arr[j + 1]) {\n                // Swap\n                int temp = arr[j];\n                arr[j] = arr[j + 1];\n                arr[j + 1] = temp;\n            }\n        }\n    }\n}\n\nTime Complexity:\n- Best case (already sorted): O(n) with optimization\n- Worst case (reverse sorted): O(n²)\n- Space: O(1)\n\nOptimization: Add a flag to stop early if no swaps in a pass.\n\nJava Built-in: Arrays.sort(arr) — uses Dual-Pivot Quicksort.', contextIntro: 'Bubble Sort is the simplest sorting algorithm. Learn how it works, implement it, and understand its time complexity.', skillTags: 'sorting,bubble-sort,swapping,time-complexity' }
+    })
+    await db.exercise.create({ data: { title: 'Sort an Array', description: 'Implement bubble sort to sort an integer array in ascending order. Return the sorted array.', starterCode: 'public class Solution {\n    public static int[] sortArray(int[] arr) {\n        // Your code here\n        return arr;\n    }\n}', testCode: 'sorted array ascending', referenceSolution: 'public class Solution {\n    public static int[] sortArray(int[] arr) {\n        int n = arr.length;\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = 0; j < n - i - 1; j++) {\n                if (arr[j] > arr[j + 1]) {\n                    int temp = arr[j];\n                    arr[j] = arr[j + 1];\n                    arr[j + 1] = temp;\n                }\n            }\n        }\n        return arr;\n    }\n}', hints: '["Outer loop runs n-1 times", "Inner loop goes from 0 to n-i-1 (already sorted elements at end)", "Swap adjacent elements if arr[j] > arr[j+1]", "Use a temp variable for swapping"]', difficulty: 'STANDARD', xpReward: 45, lessonId: l3_3.id } })
+
+    // Module 4: Methods & OOP Basics
+    const m4 = await db.module.create({
+      data: { title: 'Methods & OOP Basics', description: 'Write reusable methods, understand classes, objects, constructors, and encapsulation', order: 4, pathId: javaFundamentals.id }
+    })
+
+    const l4_1 = await db.lesson.create({
+      data: { title: 'Writing Methods', slug: 'methods', difficulty: 'BEGINNER', order: 1, moduleId: m4.id, content: 'Methods (functions) are reusable blocks of code.\n\nSyntax:\naccessModifier returnType methodName(params) {\n    // body\n    return value;\n}\n\nExamples:\n// No return, no params\npublic static void greet() {\n    System.out.println("Hello!");\n}\n\n// With params and return\npublic static int add(int a, int b) {\n    return a + b;\n}\n\n// Multiple return types\npublic static boolean isEven(int n) {\n    return n % 2 == 0;\n}\n\nMethod Overloading (same name, different params):\npublic static int add(int a, int b) { return a + b; }\npublic static double add(double a, double b) { return a + b; }\npublic static int add(int a, int b, int c) { return a + b + c; }\n\nCall:\nint sum = add(5, 3);         // 8\ndouble d = add(2.5, 3.1);     // 5.6\nint triple = add(1, 2, 3);     // 6', contextIntro: 'Methods make your code reusable and organized. Learn how to write, overload, and call methods in Java.', skillTags: 'methods,return-type,overloading,params' }
+    })
+    await db.exercise.create({ data: { title: 'Check Palindrome', description: 'Write a method that checks if a given String is a palindrome (reads same forward and backward). Return true/false.', starterCode: 'public class Solution {\n    public static boolean isPalindrome(String str) {\n        // Your code here\n        return false;\n    }\n}', testCode: 'palindrome check reverse equals original', referenceSolution: 'public class Solution {\n    public static boolean isPalindrome(String str) {\n        int left = 0;\n        int right = str.length() - 1;\n        while (left < right) {\n            if (str.charAt(left) != str.charAt(right)) return false;\n            left++;\n            right--;\n        }\n        return true;\n    }\n}', hints: '["Use two pointers: left starting from 0, right from str.length()-1", "Compare characters at left and right positions", "If they don\'t match, return false. Move both pointers inward", "Return true when left >= right"]', difficulty: 'STANDARD', xpReward: 35, lessonId: l4_1.id } })
+
+    const l4_2 = await db.lesson.create({
+      data: { title: 'Classes & Objects', slug: 'classes-objects', difficulty: 'STANDARD', order: 2, moduleId: m4.id, content: 'OOP organizes code around objects that have state (fields) and behavior (methods).\n\nClass Definition:\npublic class Student {\n    // Fields (instance variables)\n    private String name;\n    private int grade;\n    private double marks;\n\n    // Constructor\n    public Student(String name, int grade, double marks) {\n        this.name = name;\n        this.grade = grade;\n        this.marks = marks;\n    }\n\n    // Methods\n    public double getPercentage() {\n        return (marks / 500) * 100;\n    }\n\n    public String getGradeLetter() {\n        double pct = getPercentage();\n        if (pct >= 90) return "A";\n        if (pct >= 80) return "B";\n        if (pct >= 70) return "C";\n        return "D";\n    }\n\n    // Getters\n    public String getName() { return name; }\n}\n\nCreating Objects:\nStudent s1 = new Student("Amit", 10, 450.0);\nStudent s2 = new Student("Priya", 10, 380.0);\nSystem.out.println(s1.getName() + ": " + s1.getGradeLetter());\n\nKey Concepts:\n- Constructor: special method called with "new"\n- this keyword: refers to current object\n- private fields + public methods = encapsulation', contextIntro: 'Classes and objects are the foundation of Object-Oriented Programming in Java. Learn how to create blueprints (classes) and instances (objects).', skillTags: 'class,object,constructor,this,encapsulation' }
+    })
+    await db.exercise.create({ data: { title: 'Create a BankAccount Class', description: 'Create a BankAccount class with deposit(amount) and withdraw(amount) methods. withdraw should fail if insufficient balance. Return the balance.', starterCode: 'public class BankAccount {\n    private double balance;\n\n    public BankAccount(double initialBalance) {\n        this.balance = initialBalance;\n    }\n\n    public double deposit(double amount) {\n        // Your code here\n        return balance;\n    }\n\n    public double withdraw(double amount) {\n        // Your code here: only withdraw if sufficient balance\n        return balance;\n    }\n\n    public double getBalance() {\n        return balance;\n    }\n}', testCode: 'bank account deposit withdraw balance', referenceSolution: 'public class BankAccount {\n    private double balance;\n\n    public BankAccount(double initialBalance) {\n        this.balance = initialBalance;\n    }\n\n    public double deposit(double amount) {\n        balance += amount;\n        return balance;\n    }\n\n    public double withdraw(double amount) {\n        if (amount <= balance) {\n            balance -= amount;\n        }\n        return balance;\n    }\n\n    public double getBalance() {\n        return balance;\n    }\n}', hints: '["deposit: simply add amount to balance", "withdraw: check if amount <= balance before subtracting", "Always return the updated balance after operations"]', difficulty: 'STANDARD', xpReward: 40, lessonId: l4_2.id } })
+
+    // Module 5: Exception Handling
+    const m5 = await db.module.create({
+      data: { title: 'Exception Handling', description: 'Learn try-catch-finally, throwing exceptions, and custom exceptions for robust code', order: 5, pathId: javaFundamentals.id }
+    })
+
+    const l5_1 = await db.lesson.create({
+      data: { title: 'Try-Catch-Finally', slug: 'try-catch', difficulty: 'STANDARD', order: 1, moduleId: m5.id, content: 'Exceptions are runtime errors. Java provides try-catch to handle them gracefully.\n\nBasic Structure:\ntry {\n    // Code that might throw exception\n    int result = 10 / 0;\n} catch (ArithmeticException e) {\n    System.out.println("Cannot divide by zero: " + e.getMessage());\n} finally {\n    // Always runs (cleanup code)\n    System.out.println("Cleanup done");\n}\n\nCommon Exception Types:\n- ArithmeticException: divide by zero\n- NullPointerException: calling method on null\n- ArrayIndexOutOfBoundsException: invalid array index\n- NumberFormatException: invalid number parsing\n- StringIndexOutOfBoundsException: invalid string index\n\nMultiple Catch Blocks:\ntry {\n    int num = Integer.parseInt(str);\n    int result = 100 / num;\n} catch (NumberFormatException e) {\n    System.out.println("Not a valid number");\n} catch (ArithmeticException e) {\n    System.out.println("Division by zero");\n}\n\nThrowing Exceptions:\nif (age < 0) {\n    throw new IllegalArgumentException("Age cannot be negative");\n}', contextIntro: 'Exception handling prevents your program from crashing when errors occur. Learn how to catch, handle, and throw exceptions.', skillTags: 'try-catch,finally,exceptions,throw' }
+    })
+    await db.exercise.create({ data: { title: 'Safe Division', description: 'Write a method that safely divides two numbers. Return the result, or throw IllegalArgumentException if divisor is 0.', starterCode: 'public class Solution {\n    public static double safeDivide(int a, int b) {\n        // Your code here\n        return 0.0;\n    }\n}', testCode: 'safe division with exception for zero', referenceSolution: 'public class Solution {\n    public static double safeDivide(int a, int b) {\n        if (b == 0) {\n            throw new IllegalArgumentException("Cannot divide by zero");\n        }\n        return (double) a / b;\n    }\n}', hints: '["Check if b == 0 first", "If divisor is 0, throw new IllegalArgumentException", "Otherwise return (double) a / b for decimal result"]', difficulty: 'STANDARD', xpReward: 35, lessonId: l5_1.id } })
+
+    // ====== PATH 2: Object-Oriented Java ======
+    const oopPath = await db.learningPath.create({
       data: {
-        title: 'Spring Boot Backend',
-        slug: 'spring-boot-backend',
-        description: 'Build production-ready REST APIs with Spring Boot, including security, testing, and deployment.',
-        icon: '🍃',
+        title: 'Object-Oriented Java',
+        slug: 'oop-java',
+        description: 'Deep dive into OOP — inheritance, polymorphism, abstract classes, interfaces, and design patterns in Java.',
+        icon: '🔧',
         color: '#22c55e',
-        targetAudience: 'Know Java, new to Spring',
-        estimatedLessons: 8,
+        targetAudience: 'Know Java basics, want to master OOP',
+        estimatedLessons: 12,
         order: 2
       }
     })
 
+    const oop_m1 = await db.module.create({
+      data: { title: 'Inheritance & Polymorphism', description: 'Learn how classes extend other classes, method overriding, and polymorphic behavior', order: 1, pathId: oopPath.id }
+    })
+
+    const oop_l1 = await db.lesson.create({
+      data: { title: 'Inheritance', slug: 'inheritance', difficulty: 'STANDARD', order: 1, moduleId: oop_m1.id, content: 'Inheritance allows a class to inherit fields and methods from another class.\n\nParent (Super) Class:\npublic class Animal {\n    protected String name;\n\n    public Animal(String name) {\n        this.name = name;\n    }\n\n    public void speak() {\n        System.out.println(name + " makes a sound");\n    }\n}\n\nChild (Sub) Class:\npublic class Dog extends Animal {\n    public Dog(String name) {\n        super(name);  // Call parent constructor\n    }\n\n    @Override\n    public void speak() {\n        System.out.println(name + " barks: Woof!");\n    }\n}\n\nUsage:\nAnimal a1 = new Animal("Generic");\nAnimal a2 = new Dog("Buddy");\na1.speak();  // "Generic makes a sound"\na2.speak();  // "Buddy barks: Woof!"\n\nKey Points:\n- extends keyword for inheritance\n- super() calls parent constructor\n- @Override annotation for method overriding\n- Java supports single inheritance only\n- protected fields are accessible to subclasses', contextIntro: 'Inheritance is a core OOP concept that enables code reuse and hierarchy. Learn how to create class hierarchies in Java.', skillTags: 'inheritance,extends,super,override' }
+    })
+    await db.exercise.create({ data: { title: 'Shape Hierarchy', description: 'Create a class hierarchy: Shape (parent) with area() method, Circle and Rectangle (children) that override area(). Return the area as a double.', starterCode: 'public class Shape {\n    public double area() {\n        return 0.0;\n    }\n}\n\npublic class Circle extends Shape {\n    private double radius;\n\n    public Circle(double radius) {\n        this.radius = radius;\n    }\n\n    @Override\n    public double area() {\n        // Your code here: PI * radius * radius\n        return 0.0;\n    }\n}\n\npublic class Rectangle extends Shape {\n    private double width;\n    private double height;\n\n    public Rectangle(double width, double height) {\n        this.width = width;\n        this.height = height;\n    }\n\n    @Override\n    public double area() {\n        // Your code here: width * height\n        return 0.0;\n    }\n}', testCode: 'area of circle pi r squared and rectangle width times height', referenceSolution: 'public class Shape {\n    public double area() {\n        return 0.0;\n    }\n}\n\npublic class Circle extends Shape {\n    private double radius;\n    public Circle(double radius) { this.radius = radius; }\n    @Override\n    public double area() {\n        return Math.PI * radius * radius;\n    }\n}\n\npublic class Rectangle extends Shape {\n    private double width;\n    private double height;\n    public Rectangle(double width, double height) { this.width = width; this.height = height; }\n    @Override\n    public double area() {\n        return width * height;\n    }\n}', hints: '["Create a parent Shape class with a default area() method returning 0.0", "Use extends Shape to make Circle and Rectangle inherit from Shape", "Use @Override annotation before the area() method in child classes", "Circle: Math.PI * radius * radius, Rectangle: width * height"]', difficulty: 'STANDARD', xpReward: 45, lessonId: oop_l1.id } })
+
+
+    const oop_l2 = await db.lesson.create({
+      data: { title: 'Interfaces & Abstract Classes', slug: 'interfaces-abstract', difficulty: 'STANDARD', order: 2, moduleId: oop_m1.id, content: 'Interfaces and abstract classes define contracts in Java.\n\nInterface (100% abstract):\npublic interface Drawable {\n    void draw();          // abstract method (no body)\n    default void resize(double factor) {\n        System.out.println("Resizing by " + factor);\n    }\n}\n\nAbstract Class (can have both abstract and concrete):\npublic abstract class Vehicle {\n    protected String model;\n\n    public Vehicle(String model) {\n        this.model = model;\n    }\n\n    // Abstract method — subclass MUST implement\n    public abstract void start();\n\n    // Concrete method — inherited as-is\n    public void stop() {\n        System.out.println(model + " stopped");\n    }\n}\n\nImplementing:\npublic class Car extends Vehicle implements Drawable {\n    public Car(String model) { super(model); }\n\n    @Override\n    public void start() {\n        System.out.println(model + " engine started");\n    }\n\n    @Override\n    public void draw() {\n        System.out.println("Drawing car: " + model);\n    }\n}\n\nWhen to use:\n- Interface: "CAN-DO" relationship (multiple inheritance of type)\n- Abstract class: "IS-A" relationship with shared code', contextIntro: 'Interfaces and abstract classes enable abstraction and polymorphism in Java. Learn when to use each and how they differ.', skillTags: 'interface,abstract-class,default-methods,implements' }
+    })
+    await db.exercise.create({ data: { title: 'Implement Comparable', description: 'Create a Student class that implements Comparable<Student> so students can be sorted by marks (descending). Implement compareTo() method.', starterCode: 'public class Student implements Comparable<Student> {\n    private String name;\n    private int marks;\n\n    public Student(String name, int marks) {\n        this.name = name;\n        this.marks = marks;\n    }\n\n    public String getName() { return name; }\n    public int getMarks() { return marks; }\n\n    @Override\n    public int compareTo(Student other) {\n        // Your code here: sort by marks descending\n        return 0;\n    }\n}', testCode: 'comparable implementation marks descending', referenceSolution: 'public class Student implements Comparable<Student> {\n    private String name;\n    private int marks;\n    public Student(String name, int marks) { this.name = name; this.marks = marks; }\n    public String getName() { return name; }\n    public int getMarks() { return marks; }\n    @Override\n    public int compareTo(Student other) {\n        return other.marks - this.marks;\n    }\n}', hints: '["Implement the compareTo(Student other) method from Comparable<Student>", "For descending order: return other.marks - this.marks", "For ascending order: return this.marks - other.marks"]', difficulty: 'STANDARD', xpReward: 45, lessonId: oop_l2.id } })
+
+
+    // ====== PATH 3: DSA in Java ======
     const dsaPath = await db.learningPath.create({
       data: {
         title: 'DSA in Java',
-        slug: 'dsa-in-java',
-        description: 'Ace your coding interviews with comprehensive data structures and algorithms practice.',
+        slug: 'dsa-java',
+        description: 'Master Data Structures and Algorithms — essential for coding interviews and efficient programming.',
         icon: '🧮',
         color: '#a855f7',
-        targetAudience: 'Interview prep',
-        estimatedLessons: 10,
+        targetAudience: 'Know Java basics, preparing for interviews',
+        estimatedLessons: 12,
         order: 3
       }
     })
 
-    const aiPath = await db.learningPath.create({
+    const dsa_m1 = await db.module.create({
+      data: { title: 'LinkedList & Stack/Queue', description: 'Learn linked lists, stacks, queues, and their implementations in Java', order: 1, pathId: dsaPath.id }
+    })
+
+    const dsa_l1 = await db.lesson.create({
+      data: { title: 'ArrayList vs LinkedList', slug: 'list-collections', difficulty: 'STANDARD', order: 1, moduleId: dsa_m1.id, content: 'Java Collections Framework provides ready-made data structures.\n\nArrayList (dynamic array):\nArrayList<Integer> list = new ArrayList<>();\nlist.add(10);      // append\nlist.add(0, 5);    // insert at index 0\nlist.get(0);       // 5\nlist.set(1, 20);   // replace\nlist.remove(0);    // remove by index\nlist.size();       // length\n\nLinkedList:\nLinkedList<Integer> list = new LinkedList<>();\nlist.addFirst(5);  // add at head\nlist.addLast(10);  // add at tail\nlist.getFirst();   // 5\nlist.removeLast(); // remove from tail\n\nWhen to Use:\nArrayList:\n- Fast random access: O(1)\n- Slow insert/delete at middle: O(n)\n- Better for mostly-read operations\n\nLinkedList:\n- Fast insert/delete at ends: O(1)\n- Slow random access: O(n)\n- Better for frequent add/remove at ends\n\nExample:\npublic static int secondLargest(ArrayList<Integer> list) {\n    Collections.sort(list);\n    return list.get(list.size() - 2);\n}', contextIntro: 'ArrayList and LinkedList are two fundamental list implementations. Learn their differences, use cases, and common operations.', skillTags: 'arraylist,linkedlist,collections,generics' }
+    })
+    await db.exercise.create({ data: { title: 'Remove Duplicates from List', description: 'Write a method that removes duplicate integers from an ArrayList while preserving order. Return the list with unique elements.', starterCode: 'import java.util.*;\n\npublic class Solution {\n    public static ArrayList<Integer> removeDuplicates(ArrayList<Integer> list) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}', testCode: 'remove duplicates preserve order', referenceSolution: 'import java.util.*;\n\npublic class Solution {\n    public static ArrayList<Integer> removeDuplicates(ArrayList<Integer> list) {\n        LinkedHashSet<Integer> set = new LinkedHashSet<>(list);\n        return new ArrayList<>(set);\n    }\n}', hints: '["Use LinkedHashSet to remove duplicates while preserving insertion order", "new LinkedHashSet<>(list) automatically removes duplicates", "Convert back to ArrayList with new ArrayList<>(set)"]', difficulty: 'STANDARD', xpReward: 40, lessonId: dsa_l1.id } })
+
+
+    const dsa_m2 = await db.module.create({
+      data: { title: 'HashMap & HashSet', description: 'Master hash-based data structures for O(1) lookups', order: 2, pathId: dsaPath.id }
+    })
+
+    const dsa_l2 = await db.lesson.create({
+      data: { title: 'HashMap Operations', slug: 'hashmap', difficulty: 'STANDARD', order: 1, moduleId: dsa_m2.id, content: 'HashMap stores key-value pairs with O(1) average lookup.\n\nCreating:\nHashMap<String, Integer> map = new HashMap<>();\n\nOperations:\nmap.put("Java", 10);        // add key-value\nmap.get("Java");            // 10\nmap.get("Python");          // null (not found)\nmap.containsKey("Java");    // true\nmap.containsValue(10);      // true\nmap.remove("Java");         // remove entry\nmap.size();                 // number of entries\nmap.keySet();               // all keys\nmap.values();               // all values\n\nIterate:\nfor (Map.Entry<String, Integer> entry : map.entrySet()) {\n    System.out.println(entry.getKey() + ": " + entry.getValue());\n}\n\nCommon Patterns:\n// Frequency count\nHashMap<String, Integer> freq = new HashMap<>();\nfor (String word : words) {\n    freq.put(word, freq.getOrDefault(word, 0) + 1);\n}\n\n// Two Sum problem\nHashMap<Integer, Integer> seen = new HashMap<>();\nfor (int i = 0; i < arr.length; i++) {\n    int complement = target - arr[i];\n    if (seen.containsKey(complement)) {\n        return new int[]{seen.get(complement), i};\n    }\n    seen.put(arr[i], i);\n}', contextIntro: 'HashMap is one of the most used data structures. Learn how to store, retrieve, and manipulate key-value pairs efficiently.', skillTags: 'hashmap,key-value,getOrDefault,entrySet' }
+    })
+    await db.exercise.create({ data: { title: 'Two Sum', description: 'Given an array of integers and a target, return indices of two numbers that add up to the target. Use HashMap for O(n) solution.', starterCode: 'import java.util.*;\n\npublic class Solution {\n    public static int[] twoSum(int[] nums, int target) {\n        // Your code here: use HashMap for O(n) solution\n        return new int[]{-1, -1};\n    }\n}', testCode: 'two sum hash map complement', referenceSolution: 'import java.util.*;\n\npublic class Solution {\n    public static int[] twoSum(int[] nums, int target) {\n        HashMap<Integer, Integer> map = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int complement = target - nums[i];\n            if (map.containsKey(complement)) {\n                return new int[]{map.get(complement), i};\n            }\n            map.put(nums[i], i);\n        }\n        return new int[]{-1, -1};\n    }\n}', hints: '["Use a HashMap<Integer, Integer> to store value-to-index mappings", "For each number, calculate complement = target - nums[i]", "Check if complement exists in the map using map.containsKey(complement)", "If found, return the stored index and current index", "If not found, add current number and its index to the map"]', difficulty: 'STANDARD', xpReward: 50, lessonId: dsa_l2.id } })
+
+
+    const dsa_m3 = await db.module.create({
+      data: { title: 'Recursion', description: 'Learn recursive thinking and solve problems using recursion', order: 3, pathId: dsaPath.id }
+    })
+
+    const dsa_l3 = await db.lesson.create({
+      data: { title: 'Recursive Thinking', slug: 'recursion', difficulty: 'EXPERT', order: 1, moduleId: dsa_m3.id, content: 'Recursion is when a method calls itself to solve a smaller version of the same problem.\n\nStructure:\n1. Base case: when to STOP\n2. Recursive case: break problem into smaller sub-problem\n\nExample — Fibonacci:\npublic static int fib(int n) {\n    if (n <= 1) return n;        // base case\n    return fib(n - 1) + fib(n - 2); // recursive case\n}\n\nExample — Factorial:\npublic static int factorial(int n) {\n    if (n <= 1) return 1;        // base case\n    return n * factorial(n - 1);  // recursive case\n}\n\nExample — Power:\npublic static int power(int base, int exp) {\n    if (exp == 0) return 1;                  // base case\n    return base * power(base, exp - 1);      // recursive case\n}\n\nKey Concepts:\n- Call Stack: each recursive call adds a frame to the stack\n- Stack Overflow: too many recursive calls crashes the program\n- Time: often O(2^n) for naive recursion — use memoization to optimize\n\nMemoization (Optimization):\nHashMap<Integer, Integer> memo = new HashMap<>();\npublic static int fibMemo(int n) {\n    if (n <= 1) return n;\n    if (memo.containsKey(n)) return memo.get(n);\n    int result = fibMemo(n-1) + fibMemo(n-2);\n    memo.put(n, result);\n    return result;\n}', contextIntro: 'Recursion is a powerful problem-solving technique. Learn to think recursively and implement recursive algorithms.', skillTags: 'recursion,base-case,call-stack,memoization' }
+    })
+    await db.exercise.create({ data: { title: 'Fibonacci with Memoization', description: 'Implement Fibonacci using recursion with memoization (HashMap cache). Return the nth Fibonacci number efficiently.', starterCode: 'import java.util.*;\n\npublic class Solution {\n    public static int fibonacci(int n) {\n        // Your code here: use memoization for O(n) time\n        return 0;\n    }\n}', testCode: 'fibonacci memoization cache', referenceSolution: 'import java.util.*;\n\npublic class Solution {\n    public static int fibonacci(int n) {\n        HashMap<Integer, Integer> memo = new HashMap<>();\n        return fibHelper(n, memo);\n    }\n\n    private static int fibHelper(int n, HashMap<Integer, Integer> memo) {\n        if (n <= 1) return n;\n        if (memo.containsKey(n)) return memo.get(n);\n        int result = fibHelper(n - 1, memo) + fibHelper(n - 2, memo);\n        memo.put(n, result);\n        return result;\n    }\n}', hints: '["Create a HashMap<Integer, Integer> as a cache for computed values", "Base cases: if n <= 1, return n directly", "Check if the result is already in the cache before computing", "Compute result = fib(n-1) + fib(n-2) and store it in the cache", "This reduces time complexity from O(2^n) to O(n)"]', difficulty: 'EXPERT', xpReward: 60, lessonId: dsa_l3.id } })
+
+
+    // ====== PATH 4: Java Collections ======
+    const collectionsPath = await db.learningPath.create({
       data: {
-        title: 'AI/ML with Java',
-        slug: 'ai-ml-java',
-        description: 'Build real ML models using Java — from classical ML with Weka to deep learning with DL4J.',
-        icon: '🤖',
-        color: '#ec4899',
-        targetAudience: 'New to AI/ML',
-        estimatedLessons: 8,
+        title: 'Java Collections Framework',
+        slug: 'java-collections',
+        description: 'Master all collection types — List, Set, Map, Queue, and their implementations. Essential for real-world Java development.',
+        icon: '📚',
+        color: '#06b6d4',
+        targetAudience: 'Comfortable with Java basics',
+        estimatedLessons: 10,
         order: 4
       }
     })
 
-    const llmPath = await db.learningPath.create({
+    const col_m1 = await db.module.create({
+      data: { title: 'Set & Queue', description: 'Learn HashSet, TreeSet, PriorityQueue, and Deque', order: 1, pathId: collectionsPath.id }
+    })
+
+    const col_l1 = await db.lesson.create({
+      data: { title: 'HashSet & TreeSet', slug: 'set-collections', difficulty: 'STANDARD', order: 1, moduleId: col_m1.id, content: 'Sets store unique elements — no duplicates allowed.\n\nHashSet (unordered, O(1) operations):\nHashSet<String> set = new HashSet<>();\nset.add("Java");\nset.add("Python");\nset.add("Java");   // duplicate — ignored\nset.size();       // 2\nset.contains("Java"); // true\n\nTreeSet (sorted, O(log n) operations):\nTreeSet<Integer> tree = new TreeSet<>();\ntree.add(50);\ntree.add(10);\ntree.add(30);\ntree.first();      // 10 (smallest)\ntree.last();       // 50 (largest)\ntree.headSet(30);  // [10]\ntree.subSet(10, 50); // [10, 30]\n\nCommon Use Cases:\n// Remove duplicates from array\nint[] arr = {1, 2, 3, 2, 1, 4};\nSet<Integer> unique = new HashSet<>();\nfor (int n : arr) unique.add(n);\n// unique = {1, 2, 3, 4}\n\n// Find common elements\nSet<Integer> set1 = new HashSet<>(Arrays.asList(1,2,3,4));\nSet<Integer> set2 = new HashSet<>(Arrays.asList(3,4,5,6));\nset1.retainAll(set2);  // intersection: {3, 4}', contextIntro: 'Sets guarantee uniqueness. Learn when to use HashSet for speed or TreeSet for ordering.', skillTags: 'hashset,treeset,unique,sorted-set' }
+    })
+    await db.exercise.create({ data: { title: 'Find Common Elements', description: 'Given two integer arrays, find and return their common elements (intersection) as a list of unique integers.', starterCode: 'import java.util.*;\n\npublic class Solution {\n    public static List<Integer> findCommon(int[] arr1, int[] arr2) {\n        // Your code here\n        return new ArrayList<>();\n    }\n}', testCode: 'intersection of two arrays using set', referenceSolution: 'import java.util.*;\n\npublic class Solution {\n    public static List<Integer> findCommon(int[] arr1, int[] arr2) {\n        Set<Integer> set1 = new HashSet<>();\n        for (int n : arr1) set1.add(n);\n        List<Integer> common = new ArrayList<>();\n        for (int n : arr2) {\n            if (set1.contains(n)) {\n                common.add(n);\n                set1.remove(n);\n            }\n        }\n        return common;\n    }\n}', hints: '["Add all elements of the first array to a HashSet", "Iterate through the second array and check if each element exists in the set", "Add matching elements to result and remove from set to avoid duplicates"]', difficulty: 'STANDARD', xpReward: 40, lessonId: col_l1.id } })
+
+
+    const col_m2 = await db.module.create({
+      data: { title: 'Iterator & Streams', description: 'Learn Java Stream API for functional-style data processing', order: 2, pathId: collectionsPath.id }
+    })
+
+    const col_l2 = await db.lesson.create({
+      data: { title: 'Java Streams', slug: 'java-streams', difficulty: 'EXPERT', order: 1, moduleId: col_m2.id, content: 'Streams provide a declarative way to process collections.\n\nCreating Streams:\nList<Integer> nums = Arrays.asList(1, 2, 3, 4, 5);\nnums.stream()          // sequential stream\nnums.parallelStream() // parallel stream\n\nCommon Operations:\n// Filter\nnums.stream()\n    .filter(n -> n % 2 == 0)\n    .collect(Collectors.toList()); // [2, 4]\n\n// Map (transform)\nnums.stream()\n    .map(n -> n * n)\n    .collect(Collectors.toList()); // [1, 4, 9, 16, 25]\n\n// Reduce\nint sum = nums.stream().reduce(0, (a, b) -> a + b); // 15\n\n// Sorted\nnums.stream().sorted().collect(Collectors.toList());\n\n// Count\nlong count = nums.stream().filter(n -> n > 3).count(); // 2\n\nPipeline (chain operations):\nList<String> names = Arrays.asList("Amit", "Priya", "Rahul", "Anita");\nList<String> result = names.stream()\n    .filter(n -> n.startsWith("A"))\n    .map(String::toUpperCase)\n    .sorted()\n    .collect(Collectors.toList());\n// ["ANITA", "AMIT"]\n\nMethod References:\n.map(String::toUpperCase)  // same as .map(s -> s.toUpperCase())\n.filter(Objects::nonNull)', contextIntro: 'Java Streams API enables functional-style operations on collections. Learn filter, map, reduce, and other stream operations.', skillTags: 'streams,filter,map,reduce,collectors,lambda' }
+    })
+    await db.exercise.create({ data: { title: 'Stream Operations', description: 'Given a list of strings, use Java Streams to return only the strings that start with a vowel, converted to uppercase, sorted alphabetically.', starterCode: 'import java.util.*;\nimport java.util.stream.*;\n\npublic class Solution {\n    public static List<String> filterVowels(List<String> words) {\n        // Your code here: use streams\n        return new ArrayList<>();\n    }\n}', testCode: 'stream filter starts with vowel uppercase sorted', referenceSolution: 'import java.util.*;\nimport java.util.stream.*;\n\npublic class Solution {\n    private static final Set<Character> VOWELS = new HashSet<>(Arrays.asList(\'a\', \'e\', \'i\', \'o\', \'u\'));\n\n    public static List<String> filterVowels(List<String> words) {\n        return words.stream()\n            .filter(w -> !w.isEmpty() && VOWELS.contains(Character.toLowerCase(w.charAt(0))))\n            .map(String::toUpperCase)\n            .sorted()\n            .collect(Collectors.toList());\n    }\n}', hints: '["Start with words.stream() to create a stream from the list", "Use .filter() to keep only words starting with a vowel", "Check first character: Character.toLowerCase(word.charAt(0))", "Use .map(String::toUpperCase) to convert to uppercase", "Use .sorted() to sort alphabetically", "Use .collect(Collectors.toList()) to collect results into a List", "Chain all operations: stream().filter().map().sorted().collect()"]', difficulty: 'EXPERT', xpReward: 55, lessonId: col_l2.id } })
+
+
+    // ====== PATH 5: Advanced Java ======
+    const advPath = await db.learningPath.create({
       data: {
-        title: 'LLM Integration',
-        slug: 'llm-integration',
-        description: 'Integrate LLMs into your Java apps — prompt engineering, RAG systems, vector DBs, and agents.',
-        icon: '🧠',
-        color: '#06b6d4',
-        targetAudience: 'Anyone curious about LLMs',
-        estimatedLessons: 6,
+        title: 'Advanced Java',
+        slug: 'advanced-java',
+        description: 'Threads, Lambda expressions, File I/O, Generics, and modern Java features.',
+        icon: '⚡',
+        color: '#eab308',
+        targetAudience: 'Comfortable with OOP and collections',
+        estimatedLessons: 10,
         order: 5
       }
     })
 
-    // ===== JAVA FUNDAMENTALS MODULES & LESSONS =====
-    const m1 = await db.module.create({ data: { title: 'Variables & Data Types', description: 'The building blocks of every Java program', order: 1, pathId: javaPath.id } })
-    const m2 = await db.module.create({ data: { title: 'Control Flow', description: 'Making decisions and repeating actions', order: 2, pathId: javaPath.id } })
-    const m3 = await db.module.create({ data: { title: 'Object-Oriented Programming', description: 'Classes, objects, inheritance, and polymorphism', order: 3, pathId: javaPath.id } })
-    const m4 = await db.module.create({ data: { title: 'Collections Framework', description: 'Lists, sets, maps — the data structures you will use every day', order: 4, pathId: javaPath.id } })
-    const m5 = await db.module.create({ data: { title: 'Exceptions & Error Handling', description: 'Writing robust code that handles the unexpected', order: 5, pathId: javaPath.id } })
-    const m6 = await db.module.create({ data: { title: 'Streams & Lambdas', description: 'Functional-style programming in Java', order: 6, pathId: javaPath.id } })
-
-    // Module 1 Lessons
-    const l1 = await db.lesson.create({
-      data: { title: 'Your First Java Program', slug: 'first-java-program', difficulty: 'STANDARD',
-        contextIntro: "You are joining a new team that builds payment processing software. Before writing any real code, you need to understand how Java programs are structured.",
-        skillTags: 'Basics,Variables', order: 1, moduleId: m1.id,
-        content: `# Your First Java Program
-
-## The Scenario
-Imagine you just joined a fintech startup. Your first task: write a simple program that calculates the total charge for a customer's order. But before tackling that, you need to understand the fundamentals.
-
-## The Structure of a Java Program
-
-Every Java program needs at least one **class** and one **main method**. This is where execution begins.
-
-\`\`\`java
-public class OrderProcessor {
-    public static void main(String[] args) {
-        System.out.println("Order processing started...");
-    }
-}
-\`\`\`
-
-### Key Concepts
-
-- **\`public class\`** — A class is a blueprint. Every Java file needs one.
-- **\`public static void main(String[] args)\`** — The entry point. The JVM calls this method first.
-- **\`System.out.println()\`** — Prints output to the console.
-
-### Variables — Storing Data
-
-In Java, every variable has a **type**. This is different from languages like PHP or JavaScript where types are loose.
-
-\`\`\`java
-int orderCount = 5;           // Whole numbers
-double pricePerItem = 29.99; // Decimal numbers
-String customerName = "Aman"; // Text
-boolean isPremium = true;     // True/false
-char grade = 'A';            // Single character
-\`\`\`
-
-### Why Types Matter
-
-You are building a payment system. A type mismatch — adding a String to an int — would crash the system at runtime. Java's type system catches these errors **at compile time**, before your code ever reaches production.
-
-This is why companies like Netflix, LinkedIn, and Amazon choose Java for mission-critical systems.
-` }
+    const adv_m1 = await db.module.create({
+      data: { title: 'Lambda & Functional Interfaces', description: 'Master lambda expressions, functional interfaces, and method references', order: 1, pathId: advPath.id }
     })
 
-    await db.exercise.create({
+    const adv_l1 = await db.lesson.create({
+      data: { title: 'Lambda Expressions', slug: 'lambda', difficulty: 'EXPERT', order: 1, moduleId: adv_m1.id, content: 'Lambdas are anonymous functions that make Java code concise.\n\nSyntax:\n(params) -> expression\n(params) -> { statements; }\n\nWithout Lambda:\nCollections.sort(list, new Comparator<String>() {\n    @Override\n    public int compare(String a, String b) {\n        return a.length() - b.length();\n    }\n});\n\nWith Lambda:\nCollections.sort(list, (a, b) -> a.length() - b.length());\n\nFunctional Interfaces (single abstract method):\n@FunctionalInterface\ninterface MathOperation {\n    int operate(int a, int b);\n}\n\nUsage:\nMathOperation add = (a, b) -> a + b;\nMathOperation mul = (a, b) -> a * b;\nSystem.out.println(add.operate(5, 3)); // 8\nSystem.out.println(mul.operate(5, 3)); // 15\n\nBuilt-in Functional Interfaces:\n- Predicate<T>: T -> boolean (test)\n- Function<T,R>: T -> R (apply)\n- Consumer<T>: T -> void (accept)\n- Supplier<T>: () -> T (get)\n\nExample:\nPredicate<Integer> isEven = n -> n % 2 == 0;\nSystem.out.println(isEven.test(4)); // true\n\nFunction<String, Integer> strLen = s -> s.length();\nSystem.out.println(strLen.apply("Hello")); // 5', contextIntro: 'Lambda expressions enable functional programming in Java. Learn how to write concise, expressive code with lambdas.', skillTags: 'lambda,functional-interface,predicate,function,consumer' }
+    })
+    await db.exercise.create({ data: { title: 'Custom Predicate Chain', description: 'Write a method that takes a list of integers and a Predicate<Integer>, then returns a new list containing only elements that pass the predicate test.', starterCode: 'import java.util.*;\nimport java.util.function.*;\n\npublic class Solution {\n    public static List<Integer> filter(List<Integer> list, Predicate<Integer> predicate) {\n        // Your code here: filter list using the predicate\n        return new ArrayList<>();\n    }\n}', testCode: 'filter list with predicate', referenceSolution: 'import java.util.*;\nimport java.util.function.*;\n\npublic class Solution {\n    public static List<Integer> filter(List<Integer> list, Predicate<Integer> predicate) {\n        List<Integer> result = new ArrayList<>();\n        for (Integer num : list) {\n            if (predicate.test(num)) {\n                result.add(num);\n            }\n        }\n        return result;\n    }\n}', hints: '["A Predicate<Integer> has a test(Integer) method returning boolean", "Loop through each element and call predicate.test(element)", "If the test returns true, add the element to the result list"]', difficulty: 'EXPERT', xpReward: 50, lessonId: adv_l1.id } })
+
+
+    const adv_m2 = await db.module.create({
+      data: { title: 'File I/O & Exceptions', description: 'Read, write files and handle I/O exceptions in Java', order: 2, pathId: advPath.id }
+    })
+
+    const adv_l2 = await db.lesson.create({
+      data: { title: 'Reading & Writing Files', slug: 'file-io', difficulty: 'EXPERT', order: 1, moduleId: adv_m2.id, content: 'Java provides multiple ways to work with files.\n\nReading Files:\n// BufferedReader (line by line)\ntry (BufferedReader br = new BufferedReader(new FileReader("input.txt"))) {\n    String line;\n    while ((line = br.readLine()) != null) {\n        System.out.println(line);\n    }\n}\n\n// Files.readAllLines (all at once)\nList<String> lines = Files.readAllLines(Paths.get("input.txt"));\n\nWriting Files:\n// BufferedWriter\ntry (BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"))) {\n    bw.write("Hello, Java!");\n    bw.newLine();\n    bw.write("File I/O is easy");\n}\n\n// Files.write (all at once)\nFiles.write(Paths.get("output.txt"), "Hello!".getBytes());\n\nTry-with-Resources (Auto-close):\n// Automatically closes the resource (file, connection, etc.)\ntry (Scanner sc = new Scanner(new File("data.txt"))) {\n    while (sc.hasNextInt()) {\n        int num = sc.nextInt();\n    }\n} // Scanner is auto-closed here\n\nCommon Exceptions:\n- FileNotFoundException: file doesn\'t exist\n- IOException: general I/O error\n- SecurityException: no permission', contextIntro: 'File I/O is essential for reading input and writing output. Learn how to read, write files and handle I/O exceptions.', skillTags: 'file-io,BufferedReader,Files,try-with-resources' }
+    })
+    await db.exercise.create({ data: { title: 'Word Count from File', description: 'Write a method that takes a file path string and returns a HashMap<String, Integer> with each word and its count (frequency). Assume words are space-separated.', starterCode: 'import java.util.*;\n\npublic class Solution {\n    public static HashMap<String, Integer> wordCount(String content) {\n        // content is the file content as a String\n        // Count frequency of each word\n        // Your code here\n        return new HashMap<>();\n    }\n}', testCode: 'word frequency count hashmap', referenceSolution: 'import java.util.*;\n\npublic class Solution {\n    public static HashMap<String, Integer> wordCount(String content) {\n        HashMap<String, Integer> freq = new HashMap<>();\n        String[] words = content.split("\\\\s+");\n        for (String word : words) {\n            if (word.isEmpty()) continue;\n            word = word.toLowerCase();\n            freq.put(word, freq.getOrDefault(word, 0) + 1);\n        }\n        return freq;\n    }\n}', hints: '["Use content.split to split by whitespace into words", "Create a HashMap<String, Integer> to store word frequencies", "Loop through each word in the array", "Convert each word to lowercase using word.toLowerCase()", "Use freq.getOrDefault(word, 0) + 1 to get and update count", "Store updated count with freq.put(word, count)", "Return the populated HashMap"]', difficulty: 'EXPERT', xpReward: 55, lessonId: adv_l2.id } })
+
+
+    // ====== Create Demo User ======
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash('demo', salt)
+    await db.user.create({
       data: {
-        title: 'Create a Simple Order Summary', type: 'UNIT_TEST',
-        description: 'Create a class \`OrderSummary\` with a main method that declares variables for an order: \`itemCount\` (int, value 3), \`pricePerItem\` (double, value 19.99), and \`customerName\` (String, "Aman"). Calculate \`totalPrice\` by multiplying itemCount by pricePerItem, then print: "Customer: [name], Items: [count], Total: $[total]".',
-        starterCode: 'public class OrderSummary {\n    public static void main(String[] args) {\n        // Declare your variables here\n        \n        \n        \n        // Calculate total and print\n        \n    }\n}',
-        referenceSolution: 'public class OrderSummary {\n    public static void main(String[] args) {\n        int itemCount = 3;\n        double pricePerItem = 19.99;\n        String customerName = "Aman";\n        double totalPrice = itemCount * pricePerItem;\n        System.out.println("Customer: " + customerName + ", Items: " + itemCount + ", Total: $" + totalPrice);\n    }\n}',
-        testCode: 'Test OrderSummary with itemCount=3, pricePerItem=19.99',
-        hints: '["You need to declare three variables: int, double, and String", "Multiply itemCount by pricePerItem to get totalPrice", "Use System.out.println with string concatenation using +"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l1.id
+        username: 'dev',
+        email: 'dev@codeforge.dev',
+        passwordHash: hashedPassword,
+        displayName: 'Dev User',
+        avatarSeed: 'dev',
+        xp: 350,
+        level: 4,
+        streak: 3,
+        longestStreak: 7,
+        exercisesCompleted: 8,
+        totalTimeSpent: 2400
       }
     })
 
-    const l2 = await db.lesson.create({
-      data: { title: 'Primitive vs Reference Types', slug: 'primitive-vs-reference', difficulty: 'STANDARD',
-        contextIntro: 'Your payment system needs to handle different types of data — amounts, names, statuses. Understanding how Java stores data in memory is critical for writing efficient code.',
-        skillTags: 'Basics,Types', order: 2, moduleId: m1.id,
-        content: `# Primitive vs Reference Types
-
-## The Scenario
-Your team lead asks: "Why do we use \`BigDecimal\` for currency instead of \`double\`?" If you cannot answer this, you are not ready to write financial software.
-
-## Primitive Types (Value Types)
-
-Primitives store the **actual value** directly in memory. They are fast and lightweight.
-
-| Type | Size | Range | Example Use |
-|------|------|-------|-------------|
-| \`byte\` | 1 byte | -128 to 127 | File I/O buffers |
-| \`short\` | 2 bytes | -32K to 32K | Small counters |
-| \`int\` | 4 bytes | ~2 billion | General purpose |
-| \`long\` | 8 bytes | ~9 quintillion | Timestamps |
-| \`float\` | 4 bytes | 7 decimal digits | Graphics |
-| \`double\` | 8 bytes | 15 decimal digits | Calculations |
-| \`boolean\` | 1 bit | true/false | Flags |
-| \`char\` | 2 bytes | Unicode char | Characters |
-
-## Reference Types
-
-Reference types store a **pointer** to the actual data in memory (the heap).
-
-\`\`\`java
-// String is a reference type
-String name = new String("Aman");  // Full form
-String name2 = "Aman";            // Shortcut (interned)
-
-// Arrays are reference types
-int[] orders = new int[10];
-orders[0] = 42;
-\`\`\`
-
-## The \`double\` Trap
-
-\`\`\`java
-System.out.println(0.1 + 0.2);  // Prints: 0.30000000000000004
-\`\`\`
-
-This is why financial software uses \`BigDecimal\`:
-
-\`\`\`java
-import java.math.BigDecimal;
-
-BigDecimal price = new BigDecimal("19.99");
-BigDecimal tax = new BigDecimal("0.08");
-BigDecimal total = price.multiply(price.add(tax));  // Precise!
-\`\`\`
-
-### Key Takeaway
-Primitives for performance, \`BigDecimal\`/\`String\` for precision and text.
-` }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Fix the Floating Point Bug', type: 'CODE_REPAIR',
-        description: 'The following code has a bug: \`double total = 0.1 + 0.2;\` and then prints \`"Total: " + total\`. The output shows \`0.30000000000000004\` instead of \`0.3\`. Fix this by using \`BigDecimal\` to compute the sum precisely, then print the result.',
-        starterCode: 'import java.math.BigDecimal;\n\npublic class PrecisionFix {\n    public static void main(String[] args) {\n        // BUG: This gives 0.30000000000000004\n        double total = 0.1 + 0.2;\n        System.out.println("Total: " + total);\n        \n        // YOUR FIX: Use BigDecimal here\n        \n    }\n}',
-        referenceSolution: 'import java.math.BigDecimal;\n\npublic class PrecisionFix {\n    public static void main(String[] args) {\n        BigDecimal a = new BigDecimal("0.1");\n        BigDecimal b = new BigDecimal("0.2");\n        BigDecimal total = a.add(b);\n        System.out.println("Total: " + total);\n    }\n}',
-        testCode: 'Verify BigDecimal produces exact 0.3',
-        hints: '["Create BigDecimal objects using new BigDecimal(\"0.1\") — note: use String constructor", "Use .add() method to sum two BigDecimal values"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l2.id
-      }
-    })
-
-    // Module 2: Control Flow
-    const l3 = await db.lesson.create({
-      data: { title: 'If-Else & Switch', slug: 'if-else-switch', difficulty: 'STANDARD',
-        contextIntro: "Your e-commerce platform needs to apply different discount rules based on customer tier: BRONZE gets 5%, SILVER gets 10%, GOLD gets 15%, PLATINUM gets 20%. Time to learn control flow.",
-        skillTags: 'Control Flow,Conditionals', order: 1, moduleId: m2.id,
-        content: `# If-Else & Switch Expressions
-
-## The Scenario
-Your company's pricing engine needs to apply tiered discounts. A \`switch\` expression (Java 14+) is perfect for this.
-
-## If-Else
-\`\`\`java
-int orderTotal = 500;
-
-if (orderTotal >= 1000) {
-    System.out.println("Free shipping!");
-} else if (orderTotal >= 500) {
-    System.out.println("Discounted shipping: $5");
-} else {
-    System.out.println("Standard shipping: $10");
-}
-\`\`\`
-
-## Switch Expression (Java 14+)
-\`\`\`java
-String tier = "GOLD";
-
-// Modern switch expression with arrow syntax
-double discount = switch (tier) {
-    case "BRONZE"  -> 0.05;
-    case "SILVER"  -> 0.10;
-    case "GOLD"    -> 0.15;
-    case "PLATINUM" -> 0.20;
-    default        -> 0.0;
-};
-
-System.out.println("Discount: " + (discount * 100) + "%");
-\`\`\`
-
-### Pattern Matching (Java 21)
-\`\`\`java
-Object value = 42;
-
-String result = switch (value) {
-    case Integer i when i > 0 -> "Positive integer: " + i;
-    case Integer i -> "Non-positive integer: " + i;
-    case String s -> "String: " + s;
-    case null     -> "null value";
-    default       -> "Unknown type";
-};
-\`\`\`
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Build a Discount Calculator', type: 'UNIT_TEST',
-        description: 'Create a method \`public static double calculateDiscount(String tier, double orderTotal)\` that returns the discounted total. BRONZE: 5%, SILVER: 10%, GOLD: 15%, PLATINUM: 20%. Use a switch expression. If tier is null or unknown, return the orderTotal unchanged.',
-        starterCode: 'public class DiscountCalculator {\n    public static double calculateDiscount(String tier, double orderTotal) {\n        // Implement using switch expression\n        return orderTotal;\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(calculateDiscount("GOLD", 1000)); // Should print 850.0\n    }\n}',
-        referenceSolution: 'public class DiscountCalculator {\n    public static double calculateDiscount(String tier, double orderTotal) {\n        if (tier == null) return orderTotal;\n        double discountRate = switch (tier) {\n            case "BRONZE" -> 0.05;\n            case "SILVER" -> 0.10;\n            case "GOLD" -> 0.15;\n            case "PLATINUM" -> 0.20;\n            default -> 0.0;\n        };\n        return orderTotal * (1 - discountRate);\n    }\n    public static void main(String[] args) {\n        System.out.println(calculateDiscount("GOLD", 1000));\n    }\n}',
-        testCode: 'Test calculateDiscount with all tiers and null',
-        hints: '["Use switch expression with arrow syntax (->)", "Return orderTotal * (1 - discountRate)", "Handle null tier with an if check before the switch"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l3.id
-      }
-    })
-
-    const l4 = await db.lesson.create({
-      data: { title: 'Loops: For, While, Enhanced For', slug: 'loops', difficulty: 'STANDARD',
-        contextIntro: 'You need to process a batch of 10,000 orders from a database. A loop lets you iterate through each record, validate it, and calculate totals.',
-        skillTags: 'Control Flow,Loops', order: 2, moduleId: m2.id,
-        content: `# Loops in Java
-
-## The Scenario
-Your payment gateway receives a list of transactions. You need to process each one, validate it, and calculate the total. Loops make this possible.
-
-## For Loop
-\`\`\`java
-int[] transactions = {150, 200, 75, 300, 50};
-int total = 0;
-
-for (int i = 0; i < transactions.length; i++) {
-    if (transactions[i] > 0) {
-        total += transactions[i];
-    }
-}
-\`\`\`
-
-## Enhanced For Loop (For-Each)
-\`\`\`java
-for (int amount : transactions) {
-    System.out.println("Processing: $" + amount);
-}
-\`\`\`
-
-## While Loop
-\`\`\`java
-int retries = 0;
-while (retries < 3) {
-    boolean success = attemptConnection();
-    if (success) break;
-    retries++;
-}
-\`\`\`
-
-## Streams vs Loops
-\`\`\`java
-// Traditional loop
-int count = 0;
-for (int t : transactions) {
-    if (t > 100) count++;
-}
-
-// Stream (we will cover this in detail later)
-long streamCount = Arrays.stream(transactions).filter(t -> t > 100).count();
-\`\`\`
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Process Transaction Batch', type: 'UNIT_TEST',
-        description: 'Write a method \`public static int processTransactions(int[] amounts)\` that returns the sum of all positive amounts. If the array is null, return 0. If any amount is negative, skip it (it is a refund, handled separately).',
-        starterCode: 'public class TransactionProcessor {\n    public static int processTransactions(int[] amounts) {\n        // Sum all positive amounts\n        return 0;\n    }\n    \n    public static void main(String[] args) {\n        int[] txns = {100, -50, 200, 75, -25, 300};\n        System.out.println(processTransactions(txns)); // Should print 675\n    }\n}',
-        referenceSolution: 'public class TransactionProcessor {\n    public static int processTransactions(int[] amounts) {\n        if (amounts == null) return 0;\n        int total = 0;\n        for (int amount : amounts) {\n            if (amount > 0) {\n                total += amount;\n            }\n        }\n        return total;\n    }\n    public static void main(String[] args) {\n        int[] txns = {100, -50, 200, 75, -25, 300};\n        System.out.println(processTransactions(txns));\n    }\n}',
-        testCode: 'Test with positive, negative, null, and empty arrays',
-        hints: '["Check for null first — return 0 if null", "Use enhanced for loop to iterate", "Only add to total if amount > 0"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l4.id
-      }
-    })
-
-    // Module 3: OOP
-    const l5 = await db.lesson.create({
-      data: { title: 'Classes & Objects', slug: 'classes-objects', difficulty: 'STANDARD',
-        contextIntro: 'You are building a user management system. Each user has a name, email, and role. Classes let you model these real-world entities with both data and behavior.',
-        skillTags: 'OOP,Classes,Objects', order: 1, moduleId: m3.id,
-        content: `# Classes & Objects
-
-## The Scenario
-Your startup needs a User class for its authentication system. Users have properties (name, email, role) and behaviors (login, logout, hasPermission).
-
-## Defining a Class
-\`\`\`java
-public class User {
-    // Fields (instance variables)
-    private String name;
-    private String email;
-    private String role;
-    private boolean isActive;
-
-    // Constructor
-    public User(String name, String email, String role) {
-        this.name = name;
-        this.email = email;
-        this.role = role;
-        this.isActive = true;
+    // ====== Create some sample submissions for leaderboard ======
+    const users = []
+    for (const [name, xp] of [['Amit', 1200], ['Priya', 980], ['Rahul', 850], ['Sneha', 720], ['Vikram', 650]]) {
+      const uSalt = await bcrypt.genSalt(10)
+      const uHash = await bcrypt.hash('demo', uSalt)
+      const u = await db.user.create({
+        data: {
+          username: name.toLowerCase(),
+          email: `${name.toLowerCase()}@codeforge.dev`,
+          passwordHash: uHash,
+          displayName: name,
+          avatarSeed: name.toLowerCase(),
+          xp,
+          streak: Math.floor(Math.random() * 15) + 1,
+          longestStreak: Math.floor(Math.random() * 30) + 5,
+          exercisesCompleted: Math.floor(xp / 50),
+          totalTimeSpent: xp * 5
+        }
+      })
+      users.push(u)
     }
 
-    // Methods (behaviors)
-    public boolean hasPermission(String permission) {
-        if ("ADMIN".equals(role)) return true;
-        return false;
-    }
-
-    // Getters
-    public String getName() { return name; }
-    public String getRole() { return role; }
-}
-\`\`\`
-
-## Encapsulation
-Notice the fields are \`private\`. This is **encapsulation** — the class controls access to its own data. External code must go through methods (getters/setters).
-
-## Java Records (Java 16+)
-For simple data carriers:
-\`\`\`java
-public record User(String name, String email, String role) {
-    // Constructor, equals, hashCode, toString auto-generated!
-}
-\`\`\`
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Create a BankAccount Class', type: 'UNIT_TEST',
-        description: 'Create a \`BankAccount\` class with: private fields \`balance\` (double) and \`accountNumber\` (String). Constructor takes both. Methods: \`deposit(double amount)\` adds to balance, \`withdraw(double amount)\` subtracts if sufficient funds (return true) or does nothing (return false), \`getBalance()\` returns balance. Do not allow negative deposits.',
-        starterCode: 'public class BankAccount {\n    // Add your fields here\n    \n    public BankAccount(String accountNumber, double initialBalance) {\n        // Initialize fields\n    }\n    \n    public boolean deposit(double amount) {\n        // Implement deposit\n        return false;\n    }\n    \n    public boolean withdraw(double amount) {\n        // Implement withdraw\n        return false;\n    }\n    \n    public double getBalance() {\n        return 0; }\n}',
-        referenceSolution: 'public class BankAccount {\n    private double balance;\n    private String accountNumber;\n    public BankAccount(String accountNumber, double initialBalance) {\n        this.accountNumber = accountNumber;\n        if (initialBalance > 0) this.balance = initialBalance;\n    }\n    public boolean deposit(double amount) {\n        if (amount <= 0) return false;\n        balance += amount;\n        return true;\n    }\n    public boolean withdraw(double amount) {\n        if (amount <= 0 || amount > balance) return false;\n        balance -= amount;\n        return true;\n    }\n    public double getBalance() { return balance; }\n}',
-        testCode: 'Test deposit, withdraw, insufficient funds, negative deposit',
-        hints: '["Make balance and accountNumber private", "deposit should return false for negative amounts", "withdraw should check if amount > balance first"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l5.id
-      }
-    })
-
-    const l6 = await db.lesson.create({
-      data: { title: 'Inheritance & Polymorphism', slug: 'inheritance-polymorphism', difficulty: 'STANDARD',
-        contextIntro: 'Your system has different types of payments: CreditCard, UPI, NetBanking. They all share common logic (process payment) but differ in implementation. Inheritance models this "is-a" relationship.',
-        skillTags: 'OOP,Inheritance,Polymorphism', order: 2, moduleId: m3.id,
-        content: `# Inheritance & Polymorphism
-
-## The Scenario
-Your payment system supports multiple payment methods. They all share common behavior (process, refund) but each works differently. Inheritance lets you share code while allowing customization.
-
-## Inheritance
-\`\`\`java
-public abstract class PaymentMethod {
-    protected double amount;
-    protected String transactionId;
-
-    public PaymentMethod(double amount) {
-        this.amount = amount;
-        this.transactionId = generateTxnId();
-    }
-
-    // Abstract method — subclasses MUST implement
-    public abstract boolean process();
-
-    // Common method — shared by all subclasses
-    public boolean refund() {
-        System.out.println("Refunding: $" + amount);
-        return true;
-    }
-
-    private String generateTxnId() {
-        return "TXN-" + System.currentTimeMillis();
-    }
-}
-\`\`\`
-
-## Polymorphism
-\`\`\`java
-PaymentMethod credit = new CreditCardPayment(100.0);
-PaymentMethod upi = new UpiPayment(50.0);
-
-// Same method call, different behavior!
-credit.process();  // CreditCard-specific logic
-upi.process();    // UPI-specific logic
-\`\`\`
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Build a Payment Hierarchy', type: 'UNIT_TEST',
-        description: 'Create an abstract class \`PaymentMethod\` with a constructor taking \`double amount\`, an abstract method \`public abstract boolean process()\`, and a concrete method \`public double getAmount()\`. Then create two subclasses: \`CreditCardPayment\` (process returns true and prints "Processing credit card: $amount") and \`UpiPayment\` (process returns true and prints "Processing UPI: $amount").',
-        starterCode: '// Create your classes here\n\npublic class PaymentDemo {\n    public static void main(String[] args) {\n        // This should work:\n        PaymentMethod cc = new CreditCardPayment(100.0);\n        PaymentMethod upi = new UpiPayment(50.0);\n        cc.process();\n        upi.process();\n    }\n}',
-        referenceSolution: 'public abstract class PaymentMethod {\n    protected double amount;\n    public PaymentMethod(double amount) { this.amount = amount; }\n    public abstract boolean process();\n    public double getAmount() { return amount; }\n}\npublic class CreditCardPayment extends PaymentMethod {\n    public CreditCardPayment(double amount) { super(amount); }\n    public boolean process() { System.out.println("Processing credit card: $" + amount); return true; }\n}\npublic class UpiPayment extends PaymentMethod {\n    public UpiPayment(double amount) { super(amount); }\n    public boolean process() { System.out.println("Processing UPI: $" + amount); return true; }\n}',
-        testCode: 'Test polymorphic calls to process()',
-        hints: '["Use the abstract keyword for the class and the process method", "Subclasses use extends PaymentMethod", "Call super(amount) in subclass constructors"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l6.id
-      }
-    })
-
-    // Module 4: Collections
-    const l7 = await db.lesson.create({
-      data: { title: 'ArrayList & LinkedList', slug: 'arraylist-linkedlist', difficulty: 'STANDARD',
-        contextIntro: 'You are building a session store for 10 million users. You need O(1) lookups. Understanding which collection to use and when is critical for system performance.',
-        skillTags: 'Collections,List,ArrayList', order: 1, moduleId: m4.id,
-        content: `# ArrayList & LinkedList
-
-## The Scenario
-You are building a notification system that stores unread notifications for each user. ArrayList is perfect — fast random access when users click on notification #5.
-
-## ArrayList
-\`\`\`java
-import java.util.ArrayList;
-import java.util.List;
-
-List<String> notifications = new ArrayList<>();
-notifications.add("New order received");
-notifications.add("Payment confirmed");
-notifications.add("Order shipped");
-
-// Random access: O(1)
-String first = notifications.get(0);
-
-// Size
-int count = notifications.size();
-
-// Contains check
-boolean hasNew = notifications.contains("New order received");
-\`\`\`
-
-## When to Use What
-
-| Operation | ArrayList | LinkedList |
-|-----------|-----------|------------|
-| Get by index | O(1) | O(n) |
-| Add at end | O(1) amortized | O(1) |
-| Add at beginning | O(n) | O(1) |
-| Remove from beginning | O(n) | O(1) |
-| Memory | Compact | More (node pointers) |
-
-**Rule of thumb**: Use \`ArrayList\` by default. Only switch to \`LinkedList\` if you do frequent insertions/deletions at the beginning.
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Build a Task Manager', type: 'UNIT_TEST',
-        description: 'Create a \`TaskManager\` class with a \`List<String>\` field. Implement: \`addTask(String task)\`, \`removeTask(int index)\` (return the removed task or null if invalid index), \`getTasks()\` returns the list, \`findTask(String keyword)\` returns the first task containing the keyword or null. Use ArrayList.',
-        starterCode: 'import java.util.ArrayList;\nimport java.util.List;\n\npublic class TaskManager {\n    // Add your list field here\n    \n    public TaskManager() {\n        // Initialize the list\n    }\n    \n    public void addTask(String task) {\n    }\n    \n    public String removeTask(int index) {\n        return null;\n    }\n    \n    public List<String> getTasks() {\n        return null; }\n    \n    public String findTask(String keyword) {\n        return null; }\n}',
-        referenceSolution: 'import java.util.ArrayList;\nimport java.util.List;\npublic class TaskManager {\n    private List<String> tasks = new ArrayList<>();\n    public void addTask(String task) { tasks.add(task); }\n    public String removeTask(int index) {\n        if (index < 0 || index >= tasks.size()) return null;\n        return tasks.remove(index);\n    }\n    public List<String> getTasks() { return tasks; }\n    public String findTask(String keyword) {\n        for (String task : tasks) {\n            if (task.contains(keyword)) return task;\n        }\n        return null;\n    }\n}',
-        testCode: 'Test add, remove, find, and edge cases',
-        hints: '["Initialize tasks as new ArrayList<>() in constructor", "removeTask should check index bounds", "findTask uses .contains() on each string"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l7.id
-      }
-    })
-
-    const l8 = await db.lesson.create({
-      data: { title: 'HashMap — The Most Used Collection', slug: 'hashmap', difficulty: 'STANDARD',
-        contextIntro: 'You are building a session store for 10 million users and need O(1) lookups by session ID. HashMap is the answer — it is probably the most used data structure in production Java code.',
-        skillTags: 'Collections,Map,HashMap', order: 2, moduleId: m4.id,
-        content: `# HashMap
-
-## The Scenario
-Your API gateway needs to look up user sessions millions of times per second. \`HashMap\` gives you O(1) average lookup time — constant time regardless of how many entries exist.
-
-## Basic Operations
-\`\`\`java
-import java.util.HashMap;
-import java.util.Map;
-
-Map<String, String> sessions = new HashMap<>();
-sessions.put("sess_abc123", "user_456");
-sessions.put("sess_def456", "user_789");
-
-// Lookup: O(1) average
-String userId = sessions.get("sess_abc123");
-
-// Check existence
-boolean exists = sessions.containsKey("sess_abc123");
-
-// Safe get with default
-String value = sessions.getOrDefault("nonexistent", "default");
-
-// Iterate
-for (Map.Entry<String, String> entry : sessions.entrySet()) {
-    System.out.println(entry.getKey() + " -> " + entry.getValue());
-}
-\`\`\`
-
-## How HashMap Works Internally
-1. Calls \`hashCode()\` on the key
-2. Applies a hash function to find the bucket index
-3. If collision (same bucket), uses \`equals()\` to find exact match
-4. Java 8+: bucket becomes a tree (not linked list) if too many collisions
-
-### Always Override Both!
-If you use custom objects as keys, you MUST override both \`hashCode()\` and \`equals()\`.
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Build a Word Frequency Counter', type: 'UNIT_TEST',
-        description: 'Write a method \`public static Map<String, Integer> countWords(String text)\` that returns a HashMap counting word frequencies. Split by spaces, convert to lowercase, and ignore empty strings. For example, "hello world hello" should return {hello: 2, world: 1}.',
-        starterCode: 'import java.util.HashMap;\nimport java.util.Map;\n\npublic class WordCounter {\n    public static Map<String, Integer> countWords(String text) {\n        Map<String, Integer> counts = new HashMap<>();\n        // Implement word counting\n        return counts;\n    }\n    \n    public static void main(String[] args) {\n        Map<String, Integer> result = countWords("the cat sat on the mat the cat");\n        System.out.println(result);\n    }\n}',
-        referenceSolution: 'import java.util.HashMap;\nimport java.util.Map;\npublic class WordCounter {\n    public static Map<String, Integer> countWords(String text) {\n        Map<String, Integer> counts = new HashMap<>();\n        if (text == null || text.isEmpty()) return counts;\n        String[] words = text.toLowerCase().split("\\\\s+");\n        for (String word : words) {\n            if (word.isEmpty()) continue;\n            counts.put(word, counts.getOrDefault(word, 0) + 1);\n        }\n        return counts;\n    }\n    public static void main(String[] args) {\n        System.out.println(countWords("the cat sat on the mat the cat"));\n    }\n}',
-        testCode: 'Test with various strings, null, empty',
-        hints: '["Split text using .split(\"\\\\s+\") for any whitespace", "Use getOrDefault to increment counts safely", "Handle null and empty input at the start"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l8.id
-      }
-    })
-
-    // Module 5: Exceptions
-    const l9 = await db.lesson.create({
-      data: { title: 'Try-Catch-Finally & Custom Exceptions', slug: 'exceptions', difficulty: 'STANDARD',
-        contextIntro: "Your API calls an external payment service. Sometimes it is down, sometimes it times out. Your code must handle these failures gracefully — not crash the entire application.",
-        skillTags: 'Exceptions,Error Handling', order: 1, moduleId: m5.id,
-        content: `# Exception Handling
-
-## The Scenario
-Your microservice calls an external payment API. It might throw \`IOException\` (network down), \`TimeoutException\` (slow response), or return invalid data. Exception handling prevents one bad request from crashing everything.
-
-## Try-Catch-Finally
-\`\`\`java
-public String processPayment(String orderId) {
-    try {
-        PaymentResult result = paymentGateway.charge(orderId);
-        return result.getTransactionId();
-    } catch (NetworkException e) {
-        logger.error("Network error for order: " + orderId, e);
-        throw new PaymentRetryException("Retry later", e);
-    } catch (InvalidOrderException e) {
-        logger.warn("Invalid order: " + orderId);
-        return null;
-    } finally {
-        // Always runs — even if exception thrown
-        metrics.recordAttempt();
-    }
-}
-\`\`\`
-
-## Custom Exceptions
-\`\`\`java
-public class InsufficientFundsException extends RuntimeException {
-    private final double balance;
-    private final double attempted;
-
-    public InsufficientFundsException(double balance, double attempted) {
-        super(String.format(
-            "Insufficient funds. Balance: $%.2f, Attempted: $%.2f",
-            balance, attempted));
-        this.balance = balance;
-        this.attempted = attempted;
-    }
-}
-\`\`\`
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Build a Safe File Reader', type: 'UNIT_TEST',
-        description: 'Create a method \`public static String safeRead(String filename)\` that throws \`IllegalArgumentException\` if filename is null or empty. Use try-catch to simulate reading. If filename ends with ".txt", return "Content of " + filename. If it ends with ".csv", return "CSV data from " + filename. For any other extension, throw an \`UnsupportedOperationException\`.',
-        starterCode: 'public class SafeReader {\n    public static String safeRead(String filename) {\n        // Implement safe file reading logic\n        return null;\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(safeRead("data.txt"));\n    }\n}',
-        referenceSolution: 'public class SafeReader {\n    public static String safeRead(String filename) {\n        if (filename == null || filename.isEmpty()) {\n            throw new IllegalArgumentException("Filename cannot be null or empty");\n        }\n        if (filename.endsWith(".txt")) return "Content of " + filename;\n        if (filename.endsWith(".csv")) return "CSV data from " + filename;\n        throw new UnsupportedOperationException("Unsupported file type: " + filename);\n    }\n    public static void main(String[] args) {\n        System.out.println(safeRead("data.txt"));\n    }\n}',
-        testCode: 'Test with .txt, .csv, null, empty, and .pdf',
-        hints: '["First validate filename is not null or empty", "Use .endsWith() to check file extension", "Throw IllegalArgumentException for bad input, UnsupportedOperationException for wrong type"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l9.id
-      }
-    })
-
-    // Module 6: Streams
-    const l10 = await db.lesson.create({
-      data: { title: 'Stream API: Filter, Map, Reduce', slug: 'streams', difficulty: 'STANDARD',
-        contextIntro: 'Your analytics dashboard needs to find all orders above $100, apply tax, and calculate the total. Instead of writing 3 loops, the Stream API chains these operations into a single pipeline.',
-        skillTags: 'Streams,Lambdas,Functional', order: 1, moduleId: m6.id,
-        content: `# Stream API
-
-## The Scenario
-Your data pipeline needs to: filter orders by status, transform them, and aggregate results. The Stream API replaces verbose loops with declarative, readable pipelines.
-
-## Basic Pipeline
-\`\`\`java
-import java.util.List;
-import java.util.stream.Collectors;
-
-List<Order> orders = getOrders();
-
-List<String> processed = orders.stream()
-    .filter(o -> o.getStatus() == Status.COMPLETED)  // Keep only completed
-    .map(o -> o.getCustomerName())                     // Transform to names
-    .distinct()                                        // Remove duplicates
-    .sorted()                                          // Sort alphabetically
-    .collect(Collectors.toList());                     // Collect to list
-\`\`\`
-
-## Reduction
-\`\`\`java
-double total = orders.stream()
-    .filter(o -> o.getAmount() > 100)
-    .mapToDouble(Order::getAmount)
-    .sum();
-\`\`\`
-
-## Collectors
-\`\`\`java
-// Group by category
-Map<String, List<Order>> byCategory = orders.stream()
-    .collect(Collectors.groupingBy(Order::getCategory));
-
-// Partition into two groups
-Map<Boolean, List<Order>> partitioned = orders.stream()
-    .collect(Collectors.partitioningBy(o -> o.getAmount() > 100));
-\`\`\`
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Analyze Order Data with Streams', type: 'UNIT_TEST',
-        description: 'Given a \`List<Integer>\` of order amounts, use streams to: (1) filter amounts > 50, (2) apply 10% tax to each, (3) find the maximum taxed amount. Method: \`public static double findMaxTaxedOrder(List<Integer> amounts)\`. Return 0.0 if the filtered list is empty. Use \`mapToDouble\` and \`max\`.',
-        starterCode: 'import java.util.List;\nimport java.util.OptionalDouble;\n\npublic class OrderAnalyzer {\n    public static double findMaxTaxedOrder(List<Integer> amounts) {\n        // Use streams: filter > 50, apply 10% tax, find max\n        return 0.0;\n    }\n    public static void main(String[] args) {\n        List<Integer> orders = List.of(20, 50, 100, 150, 75, 200, 30);\n        System.out.println(findMaxTaxedOrder(orders)); // Should print 220.0 (200 * 1.1)\n    }\n}',
-        referenceSolution: 'import java.util.List;\npublic class OrderAnalyzer {\n    public static double findMaxTaxedOrder(List<Integer> amounts) {\n        return amounts.stream()\n            .filter(a -> a > 50)\n            .mapToDouble(a -> a * 1.1)\n            .max()\n            .orElse(0.0);\n    }\n    public static void main(String[] args) {\n        List<Integer> orders = List.of(20, 50, 100, 150, 75, 200, 30);\n        System.out.println(findMaxTaxedOrder(orders));\n    }\n}',
-        testCode: 'Test with various lists, empty list, all below threshold',
-        hints: '["Start with amounts.stream()", "Chain .filter(a -> a > 50) then .mapToDouble(a -> a * 1.1)", "Use .max().orElse(0.0) to handle empty results"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l10.id
-      }
-    })
-
-    // Add a couple more lessons for richness
-    const l11 = await db.lesson.create({
-      data: { title: 'Interfaces & Abstract Classes', slug: 'interfaces-abstract', difficulty: 'STANDARD',
-        contextIntro: 'Your team is designing a plugin system. Different payment gateways (Stripe, Razorpay, PayPal) must implement a common interface so the checkout code does not care which provider is used.',
-        skillTags: 'OOP,Interfaces,Design', order: 3, moduleId: m3.id,
-        content: `# Interfaces & Abstract Classes
-
-## The Scenario
-Your startup supports multiple payment providers. When you switch from Stripe to Razorpay, the checkout code should not need to change. Interfaces make this possible.
-
-## Interface
-\`\`\`java
-public interface PaymentGateway {
-    boolean charge(double amount);
-    boolean refund(String transactionId);
-    default String getProviderName() {
-        return "Unknown";
-    }
-}
-\`\`\`
-
-## Implementation
-\`\`\`java
-public class StripeGateway implements PaymentGateway {
-    public boolean charge(double amount) {
-        System.out.println("Stripe: Charging $" + amount);
-        return true;
-    }
-    public boolean refund(String txnId) {
-        System.out.println("Stripe: Refunding " + txnId);
-        return true;
-    }
-    public String getProviderName() { return "Stripe"; }
-}
-\`\`\`
-
-## Interface vs Abstract Class
-- **Interface**: "can-do" contract (what). Multiple inheritance.
-- **Abstract class**: "is-a" partial implementation (how + what). Single inheritance.
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Implement a Notifiable Interface', type: 'UNIT_TEST',
-        description: 'Create an interface \`Notifiable\` with method \`void send(String message)\` and a default method \`String getType()\` returning \"generic\". Create two implementations: \`EmailNotifier\` (send prints \"Email: message\", getType returns \"email\") and \`SMSNotifier\` (send prints \"SMS: message\", getType returns \"sms\").',
-        starterCode: '// Create your interface and classes here\n\npublic class NotificationDemo {\n    public static void main(String[] args) {\n        Notifiable email = new EmailNotifier();\n        Notifiable sms = new SMSNotifier();\n        email.send(\"Hello\");\n        sms.send(\"World\");\n    }\n}',
-        referenceSolution: 'public interface Notifiable {\n    void send(String message);\n    default String getType() { return "generic"; }\n}\npublic class EmailNotifier implements Notifiable {\n    public void send(String message) { System.out.println("Email: " + message); }\n    public String getType() { return "email"; }\n}\npublic class SMSNotifier implements Notifiable {\n    public void send(String message) { System.out.println("SMS: " + message); }\n    public String getType() { return "sms"; }\n}',
-        testCode: 'Test interface polymorphism',
-        hints: '["Use the interface and default keywords", "Implementing classes use implements Notifiable", "Override getType() in each implementation"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l11.id
-      }
-    })
-
-    const l12 = await db.lesson.create({
-      data: { title: 'HashSet & TreeSet', slug: 'set-collections', difficulty: 'STANDARD',
-        contextIntro: 'You need to track unique tags on user posts and display them in alphabetical order. HashSet for uniqueness, TreeSet for sorted uniqueness.',
-        skillTags: 'Collections,Set,HashSet', order: 3, moduleId: m4.id,
-        content: `# Set Collections
-
-## The Scenario
-Your content platform needs to track unique tags. Users might add \"java\" 100 times, but it should only appear once in the tag list. \`HashSet\` gives you O(1) uniqueness checks.
-
-## HashSet
-\`\`\`java
-Set<String> tags = new HashSet<>();
-tags.add("java");
-tags.add("spring");
-tags.add("java");  // Duplicate — ignored!
-System.out.println(tags.size());  // 2
-\`\`\`
-
-## TreeSet (Sorted)
-\`\`\`java
-Set<String> sortedTags = new TreeSet<>();
-sortedTags.add("zebra");
-sortedTags.add("apple");
-sortedTags.add("mango");
-// Iterates in alphabetical order: apple, mango, zebra
-\`\`\`
-`
-      }
-    })
-
-    await db.exercise.create({
-      data: {
-        title: 'Build a Duplicate Remover', type: 'UNIT_TEST',
-        description: 'Write a method \`public static List<String> removeDuplicates(List<String> items)\` that returns a new list with duplicates removed, preserving insertion order. Use \`LinkedHashSet\` internally. Handle null input by returning an empty list.',
-        starterCode: 'import java.util.*;\n\npublic class DuplicateRemover {\n    public static List<String> removeDuplicates(List<String> items) {\n        // Use LinkedHashSet to remove duplicates while preserving order\n        return new ArrayList<>();\n    }\n    public static void main(String[] args) {\n        List<String> input = List.of("a", "b", "a", "c", "b", "d");\n        System.out.println(removeDuplicates(input)); // [a, b, c, d]\n    }\n}',
-        referenceSolution: 'import java.util.*;\npublic class DuplicateRemover {\n    public static List<String> removeDuplicates(List<String> items) {\n        if (items == null) return new ArrayList<>();\n        return new ArrayList<>(new LinkedHashSet<>(items));\n    }\n    public static void main(String[] args) {\n        System.out.println(removeDuplicates(List.of("a", "b", "a", "c", "b", "d")));\n    }\n}',
-        testCode: 'Test with duplicates, null, empty list',
-        hints: '["LinkedHashSet preserves insertion order while removing duplicates", "Simply wrap the list: new LinkedHashSet<>(items)", "Convert back to ArrayList for the return value"]',
-        difficulty: 'STANDARD', xpReward: 50, lessonId: l12.id
-      }
-    })
-
-    // Create some demo users for leaderboard
-    const demoUsers = [
-      { username: 'Aman', email: 'aman@codeforge.dev', passwordHash: 'demo', displayName: 'Aman', xp: 2400, streak: 7, exercisesCompleted: 42 },
-      { username: 'Rahul', email: 'rahul@codeforge.dev', passwordHash: 'demo', displayName: 'Rahul', xp: 1800, streak: 5, exercisesCompleted: 31 },
-      { username: 'Priya', email: 'priya@codeforge.dev', passwordHash: 'demo', displayName: 'Priya', xp: 3200, streak: 12, exercisesCompleted: 55 },
-      { username: 'Dev', email: 'dev@codeforge.dev', passwordHash: 'demo', displayName: 'Dev', xp: 900, streak: 3, exercisesCompleted: 18 },
-      { username: 'Sara', email: 'sara@codeforge.dev', passwordHash: 'demo', displayName: 'Sara', xp: 1500, streak: 9, exercisesCompleted: 28 },
-      { username: 'Mike', email: 'mike@codeforge.dev', passwordHash: 'demo', displayName: 'Mike', xp: 4100, streak: 15, exercisesCompleted: 72 },
-      { username: 'Zara', email: 'zara@codeforge.dev', passwordHash: 'demo', displayName: 'Zara', xp: 2700, streak: 8, exercisesCompleted: 48 },
-    ]
-
-    for (const u of demoUsers) {
-      const user = await db.user.create({ data: u })
-      // Give some badges to demo users
-      if (u.exercisesCompleted >= 10) {
-        const badge = await db.badge.findFirst({ where: { triggerValue: 10, category: 'GRIND' } })
-        if (badge) await db.userBadge.create({ data: { userId: user.id, badgeId: badge.id } })
-      }
-      if (u.streak >= 7) {
-        const badge = await db.badge.findFirst({ where: { triggerValue: 7, category: 'STREAK' } })
-        if (badge) await db.userBadge.create({ data: { userId: user.id, badgeId: badge.id } })
-      }
-    }
-
-    return NextResponse.json({ 
-      message: 'Database seeded successfully!',
+    return NextResponse.json({
+      success: true,
+      message: 'Database seeded with Java-only content!',
       stats: {
         paths: 5,
-        modules: 6,
-        lessons: 12,
-        exercises: 12,
+        totalLessons: 15,
+        totalExercises: 15,
         badges: 18,
-        demoUsers: 7
+        users: users.length + 1
       }
     })
   } catch (error) {
     console.error('Seed error:', error)
-    return NextResponse.json({ error: String(error) }, { status: 500 })
+    return NextResponse.json({ error: 'Seed failed: ' + String(error) }, { status: 500 })
   }
 }

@@ -6,15 +6,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { motion } from 'framer-motion'
-import { Zap, BookOpen, Trophy, Flame, Code, Shield, Brain, ArrowRight, Loader2 } from 'lucide-react'
+import { Zap, BookOpen, Trophy, Flame, Code, Brain, ArrowRight, Loader2, Terminal, BarChart3, Users } from 'lucide-react'
 
 const features = [
-  { icon: Code, title: 'Interactive Code Editor', desc: 'Write real Java code with instant AI-powered feedback and grading' },
-  { icon: BookOpen, title: '6 Learning Phases', desc: 'Java Fundamentals to Full-Stack — 28 weeks of curated content' },
-  { icon: Zap, title: 'XP & Leveling System', desc: 'Earn XP, unlock levels, and track your growth with gamification' },
-  { icon: Flame, title: 'Streak System', desc: 'Build daily habits with streak tracking and bonus multipliers' },
-  { icon: Trophy, title: 'Badges & Leaderboard', desc: 'Earn rare badges and compete with other developers' },
-  { icon: Brain, title: 'AI Tutor', desc: 'Get stuck? Ask your AI tutor for hints and explanations' },
+  { icon: Code, title: 'Interactive Code Editor', desc: 'Write real Java code with syntax highlighting, instant feedback, and pattern-matching grading' },
+  { icon: BookOpen, title: '5 Learning Paths', desc: 'Java Fundamentals to Advanced Java — structured modules with real exercises and examples' },
+  { icon: Zap, title: 'XP & Leveling System', desc: 'Earn XP for each exercise, unlock levels, and track your growth with gamification' },
+  { icon: Flame, title: 'Streak System', desc: 'Build daily coding habits with streak tracking and bonus XP multipliers' },
+  { icon: Trophy, title: 'Badges & Leaderboard', desc: 'Earn rare badges and compete with other Java developers on the leaderboard' },
+  { icon: Brain, title: 'AI Tutor', desc: 'Get stuck? Ask your AI tutor for Java hints, explanations, and debugging help' },
 ]
 
 export function Landing() {
@@ -53,6 +53,7 @@ export function Landing() {
 
   const handleDemo = async () => {
     setBusy(true)
+    setError('')
     try {
       const res = await fetch('/api/auth', {
         method: 'POST',
@@ -62,9 +63,11 @@ export function Landing() {
       const data = await res.json()
       if (!res.ok) { setError(data.error); setBusy(false); return }
       setUser(data.user, data.token)
+      setLoading(true)
       const pathsRes = await fetch('/api/paths')
       const pathsData = await pathsRes.json()
       setPaths(pathsData.paths)
+      setLoading(false)
       setView('dashboard')
     } catch (e) {
       setError('Network error')
@@ -85,19 +88,18 @@ export function Landing() {
             className="mx-auto max-w-3xl text-center"
           >
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-sm">
-              <Flame className="h-4 w-4 text-orange-500" />
-              <span>28-Week Developer Learning Ecosystem</span>
+              <Code className="h-4 w-4 text-orange-500" />
+              <span>Complete Java Learning Platform</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              Master Full-Stack Development
+              Master Java Programming
               <span className="block bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
                 One Exercise at a Time
               </span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-              CodeForge ULTRA PRO MAX is a structured, gamified learning platform that takes you from
-              Java basics through Spring Boot, React, Docker, and AI integration — with real code exercises,
-              an AI tutor, and a competitive leaderboard.
+              CodeForge is a structured, gamified Java learning platform. Write real code, get instant feedback,
+              earn XP, and track your progress from basics to advanced Java concepts.
             </p>
           </motion.div>
 
@@ -127,9 +129,9 @@ export function Landing() {
 
                 {mode === 'signup' && (
                   <div className="space-y-3">
-                    <Input placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+                    <Input placeholder="Username (min 3 chars)" value={username} onChange={e => setUsername(e.target.value)} />
                     <Input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
-                    <Input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                    <Input placeholder="Password (min 6 chars)" type="password" value={password} onChange={e => setPassword(e.target.value)} />
                   </div>
                 )}
                 {mode === 'login' && (
@@ -151,8 +153,9 @@ export function Landing() {
                 </div>
 
                 <Button variant="outline" className="w-full" onClick={handleDemo} disabled={busy}>
-                  Try Demo Account (Dev)
+                  Try Demo Account
                 </Button>
+                <p className="text-xs text-muted-foreground mt-2 text-center">Demo: email = dev@codeforge.dev, password = demo</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -167,8 +170,8 @@ export function Landing() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl font-bold tracking-tight">Everything You Need to Learn</h2>
-          <p className="mt-3 text-muted-foreground">A complete developer learning ecosystem, not just tutorials</p>
+          <h2 className="text-3xl font-bold tracking-tight">Everything You Need to Learn Java</h2>
+          <p className="mt-3 text-muted-foreground">A complete Java learning ecosystem — not just tutorials</p>
         </motion.div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f, i) => (
@@ -193,15 +196,33 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Tech Stack Preview */}
+      {/* What You'll Learn */}
       <section className="border-t border-border bg-muted/30">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 text-center">
-          <h2 className="text-2xl font-bold tracking-tight mb-8">Technologies You Will Master</h2>
-          <div className="flex flex-wrap justify-center gap-3">
-            {['Java 21', 'Spring Boot', 'React', 'TypeScript', 'PostgreSQL', 'Redis', 'Docker', 'REST APIs', 'Git', 'Maven', 'Hibernate', 'Next.js'].map(t => (
-              <span key={t} className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium">
-                {t}
-              </span>
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+          <h2 className="text-2xl font-bold tracking-tight mb-8 text-center">Java Topics You Will Master</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: Terminal, title: 'Fundamentals', topics: ['Variables', 'Data Types', 'Control Flow', 'Arrays', 'Methods'] },
+              { icon: Code, title: 'OOP', topics: ['Classes', 'Inheritance', 'Interfaces', 'Polymorphism', 'Encapsulation'] },
+              { icon: BarChart3, title: 'DSA', topics: ['ArrayList', 'HashMap', 'Sorting', 'Searching', 'Recursion'] },
+              { icon: Users, title: 'Advanced', topics: ['Collections', 'Streams', 'Lambda', 'File I/O', 'Generics'] },
+            ].map((cat, i) => (
+              <Card key={i} className="border-border/50">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <cat.icon className="h-5 w-5 text-orange-500" />
+                    <h3 className="font-semibold">{cat.title}</h3>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {cat.topics.map(t => (
+                      <li key={t} className="text-sm text-muted-foreground flex items-center gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-orange-500/60" />
+                        {t}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getLevelFromXp } from '@/lib/xp'
+import bcrypt from 'bcryptjs'
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +18,9 @@ export async function POST(req: NextRequest) {
       if (password.length < 6) {
         return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 })
       }
+      if (!email.includes('@')) {
+        return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+      }
 
       const existing = await db.user.findFirst({
         where: { OR: [{ username }, { email }] }
@@ -25,11 +29,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Username or email already taken' }, { status: 409 })
       }
 
+      const salt = await bcrypt.genSalt(10)
+      const hashedPassword = await bcrypt.hash(password, salt)
+
       const user = await db.user.create({
         data: {
           username,
           email,
-          passwordHash: password, // In production: bcrypt hash
+          passwordHash: hashedPassword,
           avatarSeed: username,
           displayName: username
         }
@@ -37,7 +44,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         user: sanitizeUser(user),
-        token: user.id // Simplified: using user ID as token
+        token: user.id
       })
     }
 
@@ -52,7 +59,12 @@ export async function POST(req: NextRequest) {
       const user = await db.user.findFirst({
         where: { OR: [{ email }, { username }] }
       })
-      if (!user || user.passwordHash !== password) {
+      if (!user) {
+        return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+      }
+
+      const valid = await bcrypt.compare(password, user.passwordHash)
+      if (!valid) {
         return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
       }
 

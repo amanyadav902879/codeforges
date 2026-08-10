@@ -39,7 +39,7 @@ export function PathsView() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Learning Paths</h1>
-        <p className="mt-1 text-muted-foreground">Choose your path and start mastering technologies</p>
+        <p className="mt-1 text-muted-foreground">Choose your Java learning path and start coding</p>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
