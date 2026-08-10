@@ -38,10 +38,10 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background relative">
       {user && <Header />}
       {user && <MobileNav />}
-      <main className="flex-1">
+      <main className="flex-1 relative z-0">
         {renderView()}
       </main>
       {user && <AITutor />}

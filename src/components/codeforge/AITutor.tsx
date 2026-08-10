@@ -64,20 +64,23 @@ export function AITutor() {
   return (
     <AnimatePresence>
       {aiChatOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black lg:hidden"
-            onClick={toggleAiChat}
-          />
-          <motion.div
-            initial={{ x: 380 }}
-            animate={{ x: 0 }}
-            exit={{ x: 380 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 z-50 h-full w-full max-w-sm border-l border-border bg-card flex flex-col shadow-2xl"
+        <motion.div
+          key="ai-tutor-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.3 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black lg:hidden"
+          onClick={toggleAiChat}
+        />
+      )}
+      {aiChatOpen && (
+        <motion.div
+          key="ai-tutor-panel"
+          initial={{ x: 380 }}
+          animate={{ x: 0 }}
+          exit={{ x: 380 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="fixed right-0 top-0 z-[60] h-full w-full max-w-sm border-l border-border bg-card flex flex-col shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-border p-4">
@@ -154,7 +157,6 @@ export function AITutor() {
               </form>
             </div>
           </motion.div>
-        </>
       )}
     </AnimatePresence>
   )

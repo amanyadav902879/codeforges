@@ -122,36 +122,38 @@ export function MobileNav() {
   return (
     <AnimatePresence>
       {sidebarOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black lg:hidden"
-            onClick={toggleSidebar}
-          />
-          <motion.nav
-            initial={{ x: -280 }}
-            animate={{ x: 0 }}
-            exit={{ x: -280 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-64 border-r border-border bg-background p-4 lg:hidden"
-          >
-            <div className="flex flex-col gap-1">
-              {navItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant={view === item.id ? 'secondary' : 'ghost'}
-                  className="justify-start gap-3"
-                  onClick={() => { setView(item.id); toggleSidebar() }}
-                >
-                  <item.icon className="h-5 w-5" />
-                  {item.label}
-                </Button>
-              ))}
-            </div>
-          </motion.nav>
-        </>
+        <motion.div
+          key="mobile-nav-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.5 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-40 bg-black lg:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
+      {sidebarOpen && (
+        <motion.nav
+          key="mobile-nav-panel"
+          initial={{ x: -280 }}
+          animate={{ x: 0 }}
+          exit={{ x: -280 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="fixed left-0 top-16 z-50 h-[calc(100vh-4rem)] w-64 border-r border-border bg-background p-4 lg:hidden"
+        >
+          <div className="flex flex-col gap-1">
+            {navItems.map((item) => (
+              <Button
+                key={item.id}
+                variant={view === item.id ? 'secondary' : 'ghost'}
+                className="justify-start gap-3"
+                onClick={() => { setView(item.id); toggleSidebar() }}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.label}
+              </Button>
+            ))}
+          </div>
+        </motion.nav>
       )}
     </AnimatePresence>
   )
